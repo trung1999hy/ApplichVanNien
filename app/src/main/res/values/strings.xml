@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Universal Calendar</string>
+    <string name="tv_calendar_day">Lịch ngày</string>
+    <string name="tv_calendar_month">Lịch tháng</string>
+    <string name="tv_setting">cài đặt</string>
+    <string name="tv_today">Hôm nay</string>
+    <string name="tv_event">sự kiện</string>
+    <string name="tv_quote_demo">Khi chưa bắt tay vào công việc, sự lo lắng chỉ làm cho con người ta mệt mỏi</string>
+    <string name="tv_author_demo">Sưu tầm</string>
 </resources>

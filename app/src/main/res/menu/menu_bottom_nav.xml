@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+   <item android:id="@+id/ic_calendar_daily"
+       android:title="@string/tv_calendar_day"
+       android:icon="@drawable/ic_calendar_day" />
+
+    <item android:id="@+id/ic_calendar_monthly"
+        android:title="@string/tv_calendar_month"
+        android:icon="@drawable/ic_calendar_monthly" />
+
+    <item android:id="@+id/ic_event"
+        android:title="@string/tv_event"
+        android:icon="@drawable/event" />
+
+    <item android:id="@+id/ic_setting"
+        android:title="@string/tv_setting"
+        android:icon="@drawable/setting" />
+
+</menu>
