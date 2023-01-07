@@ -4,30 +4,41 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 
-abstract class BaseFragment : Fragment() {
+abstract class BaseFragment<B : ViewDataBinding, V : ViewModel> : Fragment() {
+
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var mViewDataBinding: B
+    private lateinit var mViewModel: V
+
+    val binding: B get() = mViewDataBinding
+    val viewModel: V get() = mViewModel
+
+    protected abstract fun getViewModelClass(): Class<V>
+
+    protected abstract fun getLayoutId(): Int
+
+    protected abstract fun initView()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return getLayoutView(inflater, container)
+    ): View {
+        mViewDataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
+        mViewDataBinding.lifecycleOwner = this
+        mViewDataBinding.executePendingBindings()
+        return mViewDataBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
-        initData()
+        initView()
     }
 
-    abstract fun getLayoutView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-    ): View
-
-    abstract fun initViews()
-
-    abstract fun initData()
 }

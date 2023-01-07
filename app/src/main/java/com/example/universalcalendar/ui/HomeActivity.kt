@@ -1,55 +1,50 @@
 package com.example.universalcalendar.ui
 
-import android.graphics.Color
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.fragment.NavHostFragment
 import com.example.universalcalendar.R
-import com.example.universalcalendar.ui.fragment.DayCalendarFragment
-import com.example.universalcalendar.ui.fragment.EventFragment
-import com.example.universalcalendar.ui.fragment.MonthCalendarFragment
-import com.example.universalcalendar.ui.fragment.SettingFragment
+import com.example.universalcalendar.databinding.ActivityHomeBinding
+import com.example.universalcalendar.ui.base.BaseActivity
+import com.example.universalcalendar.ui.feature.daycalendar.DayCalendarFragment
+import com.example.universalcalendar.ui.feature.event.EventFragment
+import com.example.universalcalendar.ui.feature.monthcalendar.MonthCalendarFragment
+import com.example.universalcalendar.ui.feature.setting.SettingFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.activity_main.*
 
-class HomeActivity : AppCompatActivity() {
-    private val dayCalendarFragment = DayCalendarFragment()
-    private val monthCalendarFragment = MonthCalendarFragment()
-    private val eventFragment = EventFragment()
-    private val settingFragment = SettingFragment()
-    private val manager = supportFragmentManager
+class HomeActivity : BaseActivity<ActivityHomeBinding>(), NavController.OnDestinationChangedListener {
 
-    private var activeFragment: Fragment = dayCalendarFragment
+    private var dayCalendarFragment : DayCalendarFragment? = null
+    private var monthCalendarFragment : MonthCalendarFragment? = null
+    private var eventFragment : EventFragment? = null
+    private var settingFragment : SettingFragment? = null
+    private lateinit var navController: NavController
+
+    private var activeFragment: Fragment?= dayCalendarFragment
 
     private val navItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             return@OnNavigationItemSelectedListener when (item.itemId) {
                 R.id.ic_calendar_daily -> {
-                    manager.beginTransaction().hide(activeFragment).show(dayCalendarFragment)
-                        .commit()
-                    activeFragment = dayCalendarFragment
+                    navigateToDayCalendarScreen()
                     true
                 }
 
                 R.id.ic_calendar_monthly -> {
-                    manager.beginTransaction().hide(activeFragment).show(monthCalendarFragment)
-                        .commit()
-                    activeFragment = monthCalendarFragment
+                    navigateToMonthCalendarScreen()
                     true
                 }
 
                 R.id.ic_event -> {
-                    manager.beginTransaction().hide(activeFragment).show(eventFragment)
-                        .commit()
-                    activeFragment = eventFragment
+                    navigateToEventScreen()
                     true
                 }
 
                 R.id.ic_setting -> {
-                    manager.beginTransaction().hide(activeFragment).show(settingFragment)
-                        .commit()
-                    activeFragment = settingFragment
+                    navigateToSettingScreen()
                     true
                 }
 
@@ -58,21 +53,74 @@ class HomeActivity : AppCompatActivity() {
         }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        initView()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            bottom_nav.circleColor = getColor(R.color.orange)
+            binding.bottomNav.circleColor = getColor(R.color.orange)
         }
     }
 
-    private fun initView() {
-        bottom_nav.setOnNavigationItemSelectedListener(navItemSelectedListener)
-        manager.beginTransaction().add(R.id.frame_container, dayCalendarFragment, "1").commit()
-        manager.beginTransaction().add(R.id.frame_container, monthCalendarFragment, "2")
-            .hide(monthCalendarFragment).commit()
-        manager.beginTransaction().add(R.id.frame_container, eventFragment, "3")
-            .hide(eventFragment).commit()
-        manager.beginTransaction().add(R.id.frame_container, settingFragment, "4")
-            .hide(settingFragment).commit()
+    override fun getLayoutId() = R.layout.activity_home
+
+    override fun initView() {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_fragment) as NavHostFragment
+        navController = navHostFragment.navController
+        navController.addOnDestinationChangedListener(this)
+        binding.bottomNav.setOnItemSelectedListener(navItemSelectedListener)
+        dayCalendarFragment =
+            navHostFragment.childFragmentManager.findFragmentById(R.id.day_fragment) as DayCalendarFragment?
+        monthCalendarFragment =
+            navHostFragment.childFragmentManager.findFragmentById(R.id.month_fragment) as MonthCalendarFragment?
+        eventFragment =
+            navHostFragment.childFragmentManager.findFragmentById(R.id.event_fragment) as EventFragment?
+        settingFragment =
+            navHostFragment.childFragmentManager.findFragmentById(R.id.setting_fragment) as SettingFragment?
+        binding.bottomNav.selectedItemId = R.id.ic_calendar_daily
     }
+    override fun onDestinationChanged(
+        controller: NavController,
+        destination: NavDestination,
+        arguments: Bundle?
+    ) {
+        invalidateOptionsMenu()
+        when (destination.id) {
+            R.id.day_fragment -> {}
+            R.id.month_fragment -> {}
+            R.id.event_fragment-> {}
+            R.id.setting_fragment -> {}
+            else -> {}
+        }
+    }
+
+    private fun navigateToDayCalendarScreen() {
+        navController.navigate(R.id.day_fragment)
+        activeFragment = dayCalendarFragment
+    }
+
+    private fun navigateToMonthCalendarScreen() {
+        navController.navigate(R.id.month_fragment)
+        activeFragment = monthCalendarFragment
+    }
+
+    private fun navigateToEventScreen() {
+        navController.navigate(R.id.event_fragment)
+        activeFragment = eventFragment
+    }
+
+    private fun navigateToSettingScreen() {
+        navController.navigate(R.id.setting_fragment)
+        activeFragment = settingFragment
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        navController.navigateUp()
+        return true
+    }
+
+    override fun onBackPressed() {
+        when (navController.currentDestination?.id) {
+            R.id.day_fragment -> finish()
+            else -> navController.navigateUp()
+        }
+    }
+
 }

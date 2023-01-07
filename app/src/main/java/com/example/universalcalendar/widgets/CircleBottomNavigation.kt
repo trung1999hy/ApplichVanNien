@@ -1,4 +1,4 @@
-package com.example.universalcalendar.ui.custom
+package com.example.universalcalendar.widgets
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator

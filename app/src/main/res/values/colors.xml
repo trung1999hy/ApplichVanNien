@@ -11,4 +11,5 @@
     <color name="blue_normal">#2299F8</color>
     <color name="red">#F61F10</color>
     <color name="gray">#918F8F</color>
+    <color name="splash_bg">#E67B0F</color>
 </resources>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/day_fragment">
+    <fragment
+        android:id="@+id/day_fragment"
+        android:name="com.example.universalcalendar.ui.feature.daycalendar.DayCalendarFragment"
+        android:label="Day Calendar Fragment"
+        tools:layout="@layout/fragment_day_calendar">
+        <action
+            android:id="@+id/action_day_fragment_to_month_fragment"
+            app:destination="@id/month_fragment" />
+        <action
+            android:id="@+id/action_day_fragment_to_event_fragment2"
+            app:destination="@id/event_fragment" />
+        <action
+            android:id="@+id/action_day_fragment_to_setting_fragment"
+            app:destination="@id/setting_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/month_fragment"
+        android:name="com.example.universalcalendar.ui.feature.monthcalendar.MonthCalendarFragment"
+        android:label="Day Calendar Fragment"
+        tools:layout="@layout/fragment_month_calendar">
+        <action
+            android:id="@+id/action_month_fragment_to_event_fragment"
+            app:destination="@id/event_fragment" />
+        <action
+            android:id="@+id/action_month_fragment_to_day_fragment"
+            app:destination="@id/day_fragment" />
+        <action
+            android:id="@+id/action_month_fragment_to_setting_fragment"
+            app:destination="@id/setting_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/event_fragment"
+        android:name="com.example.universalcalendar.ui.feature.event.EventFragment"
+        android:label="Day Calendar Fragment"
+        tools:layout="@layout/fragment_event">
+        <action
+            android:id="@+id/action_event_fragment_to_setting_fragment"
+            app:destination="@id/setting_fragment" />
+        <action
+            android:id="@+id/action_event_fragment_to_day_fragment"
+            app:destination="@id/day_fragment" />
+        <action
+            android:id="@+id/action_event_fragment_to_month_fragment"
+            app:destination="@id/month_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/setting_fragment"
+        android:name="com.example.universalcalendar.ui.feature.setting.SettingFragment"
+        android:label="Day Calendar Fragment"
+        tools:layout="@layout/fragment_setting">
+        <action
+            android:id="@+id/action_setting_fragment_to_day_fragment"
+            app:destination="@id/day_fragment" />
+        <action
+            android:id="@+id/action_setting_fragment_to_month_fragment"
+            app:destination="@id/month_fragment" />
+        <action
+            android:id="@+id/action_setting_fragment_to_event_fragment"
+            app:destination="@id/event_fragment" />
+    </fragment>
+</navigation>
