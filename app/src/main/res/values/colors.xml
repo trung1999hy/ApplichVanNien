@@ -16,4 +16,6 @@
     <color name="colorTransparent">#00FF0000</color>
     <color name="dark_blue">#0F57E6</color>
     <color name="line_border_grey">#E6E6E6</color>
+    <color name="date_selected">#F38866</color>
+    <color name="date_now_unseleted">#E4E4E4</color>
 </resources>

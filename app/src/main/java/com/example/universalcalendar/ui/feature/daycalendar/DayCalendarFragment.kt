@@ -13,4 +13,8 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
     override fun initView() {
     }
 
+    override fun initData() {
+
+    }
+
 }
