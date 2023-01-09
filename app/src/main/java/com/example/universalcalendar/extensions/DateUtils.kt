@@ -1,15 +1,41 @@
 package com.example.universalcalendar.extensions
 
 import android.util.Log
-import com.example.universalcalendar.common.Strings
-import java.text.Normalizer
+import com.example.universalcalendar.common.Strings.EMPTY
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.text.Normalizer
 import java.util.regex.Pattern
 import kotlin.math.floor
 import kotlin.math.sin
 
 object DateUtils {
+
+    const val DATE_LOCALE_FORMAT = "yyyy-MM-dd"
+    const val WEEK_DAY_FORMAT = "EEEE"
+//    const val DATE_TITLE_FORMAT = "d tháng M, yyyy"
+
+    fun convertStringToDate(format: String, dateStr: String?): Date? {
+        if (dateStr.isNullOrEmpty())
+            return null
+        return try {
+            SimpleDateFormat(format, Locale.ENGLISH).parse(dateStr)
+        } catch (e: ParseException) {
+//            Log.e("ConvertDateToString-ParseException: " + e.message)
+            null
+        }
+    }
+
+    fun convertDateToString(date: Date?, format: String): String? {
+        if (date == null) return null
+        return try {
+            SimpleDateFormat(format, Locale.ENGLISH).format(date)
+        } catch (e: ParseException) {
+//            Log.e("ConvertDateToString-ParseException: " + e.message)
+            null
+        }
+    }
 
     private const val PI = Math.PI
     private const val TAG = "LunarCoreHelper"
@@ -521,7 +547,7 @@ object DateUtils {
             5 -> "Thứ năm"
             6 -> "Thứ sáu"
             7 -> "Thứ bảy"
-            else -> Strings.EMPTY
+            else -> EMPTY
         }
     }
 

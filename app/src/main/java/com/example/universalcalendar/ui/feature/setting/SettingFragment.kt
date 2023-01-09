@@ -13,4 +13,8 @@ class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>()
     override fun initView() {
     }
 
+    override fun initData() {
+
+    }
+
 }

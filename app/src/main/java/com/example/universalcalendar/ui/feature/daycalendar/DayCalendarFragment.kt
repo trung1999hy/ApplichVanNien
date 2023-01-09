@@ -267,4 +267,8 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
         linearLayout2.startAnimation(translationAnimation)
     }
 
+    override fun initData() {
+
+    }
+
 }

@@ -25,6 +25,8 @@ abstract class BaseFragment<B : ViewDataBinding, V : ViewModel> : Fragment() {
 
     protected abstract fun initView()
 
+    protected abstract fun initData()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,6 +41,7 @@ abstract class BaseFragment<B : ViewDataBinding, V : ViewModel> : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        initData()
     }
 
     protected fun getWidthScreen(): Int {

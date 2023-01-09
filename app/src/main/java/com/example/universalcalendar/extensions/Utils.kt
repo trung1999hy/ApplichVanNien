@@ -14,8 +14,4 @@ object Utils {
        }
        return jsonString
    }
-
-    fun formatDateTime() {
-
-    }
 }

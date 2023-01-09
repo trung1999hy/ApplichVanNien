@@ -14,5 +14,9 @@ class EventFragment : BaseFragment<FragmentEventBinding, EventViewModel>() {
     override fun initView() {
     }
 
+    override fun initData() {
+
+    }
+
 
 }

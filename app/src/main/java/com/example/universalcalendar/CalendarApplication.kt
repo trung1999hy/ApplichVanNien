@@ -3,10 +3,10 @@ package com.example.universalcalendar
 import android.app.Application
 
 class CalendarApplication : Application() {
-    companion object {
-        private lateinit var instance: CalendarApplication
 
-        fun getInstance(): CalendarApplication = instance
+    companion object {
+        var instance: CalendarApplication? = null
+        fun context() = instance!!.applicationContext!!
     }
 
     override fun onCreate() {
