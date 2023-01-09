@@ -46,6 +46,10 @@ abstract class BaseFragment<B : ViewDataBinding, V : ViewModel> : Fragment() {
         initData()
     }
 
+    protected fun getWidthScreen(): Int {
+        return resources.displayMetrics.widthPixels
+    }
+
     class ViewModelFactory : ViewModelProvider.Factory {
         override fun <V : ViewModel> create(modelClass: Class<V>): V {
             return modelClass.getConstructor().newInstance()

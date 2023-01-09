@@ -8,6 +8,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import com.example.universalcalendar.R
 import com.example.universalcalendar.databinding.ActivityHomeBinding
+import com.example.universalcalendar.extensions.SharePreference
 import com.example.universalcalendar.ui.base.BaseActivity
 import com.example.universalcalendar.ui.feature.daycalendar.DayCalendarFragment
 import com.example.universalcalendar.ui.feature.event.EventFragment
@@ -24,6 +25,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(), NavController.OnDestin
     private lateinit var navController: NavController
 
     private var activeFragment: Fragment?= dayCalendarFragment
+    private val prefs = SharePreference()
 
     private val navItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -56,6 +58,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(), NavController.OnDestin
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             binding.bottomNav.circleColor = getColor(R.color.orange)
         }
+
     }
 
     override fun getLayoutId() = R.layout.activity_home
