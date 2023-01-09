@@ -7,7 +7,7 @@ import androidx.core.view.children
 import com.example.universalcalendar.R
 import com.example.universalcalendar.common.Strings
 import com.example.universalcalendar.databinding.FragmentMonthCalendarBinding
-import com.example.universalcalendar.extensions.DateUtils
+import com.example.universalcalendar.model.DayDto
 import com.example.universalcalendar.ui.base.BaseFragment
 import com.example.universalcalendar.widgets.DayViewContainer
 import com.example.universalcalendar.widgets.MonthViewContainer
@@ -18,33 +18,15 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.*
+import androidx.lifecycle.Observer
+import com.example.universalcalendar.common.Constant
 
 class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthViewModel>() {
 
-    companion object {
-        private val NUMBER_ADD_MONTH_TO_CALENDAR = 1L
-    }
-
     private var selectedDate: LocalDate? = null
-    private lateinit var  currentMonth: YearMonth
-    private lateinit var  startMonth: YearMonth
-    private lateinit var  endMonth: YearMonth
-    private val mapDayWeekTitle : MutableMap<String,String> = mutableMapOf(
-        "MONDAY" to "Thứ Hai",
-        "TUESDAY" to "Thứ Ba",
-        "WEDNESDAY" to "Thứ Tư",
-        "THURSDAY" to "Thứ Năm",
-        "FRIDAY" to "Thứ Sáu",
-        "SATURDAY" to "Thứ Bảy",
-        "SUNDAY" to "Chủ Nhật",
-        "Mon" to "Hai",
-        "Tue" to "Ba",
-        "Wed" to "Tư",
-        "Thu" to "Năm",
-        "Fri" to "Sáu",
-        "Sat" to "Bảy",
-        "Sun" to "C.n",
-    )
+    private lateinit var currentMonth: YearMonth
+    private lateinit var startMonth: YearMonth
+    private lateinit var endMonth: YearMonth
 
     override fun getViewModelClass(): Class<MonthViewModel> = MonthViewModel::class.java
 
@@ -58,12 +40,12 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
                         binding.monthCalendar.notifyDateChanged(selectedDate ?: day.date)
                         selectedDate = day.date
                         binding.monthCalendar.notifyDateChanged(day.date)
-                        updateTitleCurrentDate()
+                        viewModel.updateCurrentDayDto(selectedDate)
                     } else {
                         selectedDate = day.date
                         binding.monthCalendar.notifyDateChanged(day.date)
                         binding.monthCalendar.smoothScrollToMonth(day.date.yearMonth)
-                        updateTitleCurrentDate()
+                        viewModel.updateCurrentDayDto(selectedDate)
                     }
                 }
             }
@@ -74,7 +56,7 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
                 if (data.position == DayPosition.MonthDate) {
                     container.textView.setTextColor(Color.BLACK)
                     when (data.date) {
-                        selectedDate ->  container.textView.setBackgroundResource(R.drawable.bg_month_calendar_date_selected)
+                        selectedDate -> container.textView.setBackgroundResource(R.drawable.bg_month_calendar_date_selected)
                         LocalDate.now() -> container.textView.setBackgroundResource(R.drawable.bg_month_calendar_date_now)
                         else -> container.textView.background = null
                     }
@@ -89,11 +71,12 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
     }
 
     override fun initData() {
+        binding.monthCalendarViewModel = viewModel
         currentMonth = YearMonth.now()
         selectedDate = LocalDate.now()
-        updateTitleCurrentDate()
-        startMonth = currentMonth.minusMonths(NUMBER_ADD_MONTH_TO_CALENDAR)
-        endMonth = currentMonth.plusMonths(NUMBER_ADD_MONTH_TO_CALENDAR)
+        viewModel.updateCurrentDayDto(selectedDate)
+        startMonth = currentMonth.minusMonths(Constant.Calendar.NUMBER_ADD_MONTH_TO_CALENDAR)
+        endMonth = currentMonth.plusMonths(Constant.Calendar.NUMBER_ADD_MONTH_TO_CALENDAR)
         val daysOfWeek = daysOfWeek()
         binding.monthCalendar.setup(startMonth, endMonth, daysOfWeek.first())
         binding.monthCalendar.scrollToMonth(currentMonth)
@@ -108,11 +91,14 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
                             val dayOfWeek = daysOfWeek()[index]
                             val title =
                                 dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                            textView.text = mapDayWeekTitle[title]
+                            textView.text = Constant.Calendar.MAP_DAY_WEEK_TITLE[title]
                         }
                 }
             }
         }
+        viewModel.currentDayDto().observe(viewLifecycleOwner, Observer {
+            updateTitleCurrentDate(it)
+        })
     }
 
     private fun updateMonthAfterScroll(monthCalendar: YearMonth) {
@@ -123,7 +109,7 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
             binding.monthCalendar.notifyDateChanged(selectedDate ?: dateCurrentMonthSelect)
             selectedDate = dateCurrentMonthSelect
             binding.monthCalendar.notifyDateChanged(dateCurrentMonthSelect)
-            updateTitleCurrentDate()
+            viewModel.updateCurrentDayDto(selectedDate)
         }
         when (currentMonth) {
             endMonth -> addNextMonthToCalendar()
@@ -132,31 +118,25 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
         }
     }
 
-    private fun updateTitleCurrentDate() {
-        val weekDay = mapDayWeekTitle[selectedDate?.dayOfWeek.toString()]  ?: Strings.EMPTY
-        val day = selectedDate?.dayOfMonth ?: Strings.EMPTY
-        val month = selectedDate?.monthValue ?: Strings.EMPTY
-        val year = selectedDate?.year ?: Strings.EMPTY
-        val monthContentTimeTitle = "$day Tháng $month, $year"
-        val monthTitleHeader = "$weekDay, $monthContentTimeTitle"
-
+    private fun updateTitleCurrentDate(dayDto: DayDto) {
+        val monthContentTimeTitle = "${dayDto.day} Tháng ${dayDto.month}, ${dayDto.year}"
+        val monthTitleHeader = "${dayDto.dayOfWeek}, $monthContentTimeTitle"
         binding.tvMonthSelectTitle.text = monthTitleHeader
-        binding.monthDateDetailTitle.text = weekDay.uppercase(Locale.getDefault())
+        binding.monthDateDetailTitle.text = dayDto.dayOfWeek?.uppercase(Locale.getDefault()) ?: Strings.EMPTY
         binding.monthDateDetailPositive.text = monthContentTimeTitle
     }
 
     private fun addNextMonthToCalendar() {
         val daysOfWeek = daysOfWeek()
-        endMonth = currentMonth.plusMonths(NUMBER_ADD_MONTH_TO_CALENDAR)
+        endMonth = currentMonth.plusMonths(Constant.Calendar.NUMBER_ADD_MONTH_TO_CALENDAR)
         binding.monthCalendar.updateMonthData(startMonth, endMonth, daysOfWeek.first())
         binding.monthCalendar.scrollToMonth(currentMonth)
     }
 
     private fun addLastMonthToCalendar() {
         val daysOfWeek = daysOfWeek()
-        startMonth = currentMonth.minusMonths(NUMBER_ADD_MONTH_TO_CALENDAR)
+        startMonth = currentMonth.minusMonths(Constant.Calendar.NUMBER_ADD_MONTH_TO_CALENDAR)
         binding.monthCalendar.updateMonthData(startMonth, endMonth, daysOfWeek.first())
         binding.monthCalendar.scrollToMonth(currentMonth)
     }
-
 }

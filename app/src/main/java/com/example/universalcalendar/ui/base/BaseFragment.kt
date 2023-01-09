@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 
 abstract class BaseFragment<B : ViewDataBinding, V : ViewModel> : Fragment() {
 
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var mViewDataBinding: B
     private lateinit var mViewModel: V
 
@@ -32,6 +32,8 @@ abstract class BaseFragment<B : ViewDataBinding, V : ViewModel> : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        viewModelFactory = ViewModelFactory()
+        mViewModel = ViewModelProvider(this, viewModelFactory)[getViewModelClass()]
         mViewDataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
         mViewDataBinding.lifecycleOwner = this
         mViewDataBinding.executePendingBindings()
@@ -42,6 +44,12 @@ abstract class BaseFragment<B : ViewDataBinding, V : ViewModel> : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initView()
         initData()
+    }
+
+    class ViewModelFactory : ViewModelProvider.Factory {
+        override fun <V : ViewModel> create(modelClass: Class<V>): V {
+            return modelClass.getConstructor().newInstance()
+        }
     }
 
 }
