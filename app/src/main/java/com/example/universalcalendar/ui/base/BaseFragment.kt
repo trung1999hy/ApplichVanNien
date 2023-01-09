@@ -41,4 +41,8 @@ abstract class BaseFragment<B : ViewDataBinding, V : ViewModel> : Fragment() {
         initView()
     }
 
+    protected fun getWidthScreen(): Int {
+        return resources.displayMetrics.widthPixels
+    }
+
 }
