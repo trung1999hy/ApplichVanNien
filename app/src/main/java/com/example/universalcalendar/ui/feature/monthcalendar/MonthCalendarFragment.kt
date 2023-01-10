@@ -21,6 +21,7 @@ import java.util.*
 import androidx.lifecycle.Observer
 import com.example.universalcalendar.common.Constant
 import com.example.universalcalendar.ui.dialog.DatePickerDialog
+import java.time.temporal.ChronoUnit
 
 class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthViewModel>() {
 
@@ -78,6 +79,14 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
             dialogDatePicker.apply {
                 datePickerCallback = {
                     currentMonth = YearMonth.from(it)
+                    when {
+                        currentMonth > endMonth -> addNextMonthToCalendar(
+                            ChronoUnit.MONTHS.between(endMonth, currentMonth)
+                        )
+                        currentMonth < startMonth -> addLastMonthToCalendar(
+                            ChronoUnit.MONTHS.between(currentMonth, startMonth)
+                        )
+                    }
                     binding.monthCalendar.notifyDateChanged(selectedDate ?: it)
                     selectedDate = it
                     binding.monthCalendar.notifyDateChanged(it)
@@ -146,16 +155,16 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
         binding.monthDateDetailPositive.text = monthContentTimeTitle
     }
 
-    private fun addNextMonthToCalendar() {
+    private fun addNextMonthToCalendar(number: Long = Constant.Calendar.NUMBER_ADD_MONTH_TO_CALENDAR) {
         val daysOfWeek = daysOfWeek()
-        endMonth = currentMonth.plusMonths(Constant.Calendar.NUMBER_ADD_MONTH_TO_CALENDAR)
+        endMonth = currentMonth.plusMonths(number)
         binding.monthCalendar.updateMonthData(startMonth, endMonth, daysOfWeek.first())
         binding.monthCalendar.scrollToMonth(currentMonth)
     }
 
-    private fun addLastMonthToCalendar() {
+    private fun addLastMonthToCalendar(number: Long = Constant.Calendar.NUMBER_ADD_MONTH_TO_CALENDAR) {
         val daysOfWeek = daysOfWeek()
-        startMonth = currentMonth.minusMonths(Constant.Calendar.NUMBER_ADD_MONTH_TO_CALENDAR)
+        startMonth = currentMonth.minusMonths(number)
         binding.monthCalendar.updateMonthData(startMonth, endMonth, daysOfWeek.first())
         binding.monthCalendar.scrollToMonth(currentMonth)
     }

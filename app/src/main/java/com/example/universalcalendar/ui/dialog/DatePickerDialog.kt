@@ -44,11 +44,11 @@ class DatePickerDialog : BaseDialog() {
     private fun initView() {
         val today = Calendar.getInstance()
         currentDay = today.get(Calendar.DAY_OF_MONTH)
-        currentMonth = today.get(Calendar.MONTH)
+        currentMonth = today.get(Calendar.MONTH) + 1
         currentYear = today.get(Calendar.YEAR)
         updateDayOfWeek()
         mView.datePicker.init(
-            currentYear, currentMonth, currentDay
+            currentYear, currentMonth - 1, currentDay
         ) { _, year, month, day ->
             currentDay = day
             currentMonth = month + 1
@@ -57,10 +57,12 @@ class DatePickerDialog : BaseDialog() {
         }
         mView.ic_close_date_picker?.setOnClickListener { dismissDialog() }
         mView.ic_check_date?.setOnClickListener {
+            val month = if ("$currentMonth".length < 2) "0$currentMonth" else "$currentMonth"
+            val day = if ("$currentDay".length < 2) "0$currentDay" else "$currentDay"
             val dateStr = DateUtils.convertDateToString(
                 DateUtils.convertStringToDate(
-                    DateUtils.DATE_LOCALE_FORMAT_1,
-                    "$currentYear$currentMonth$currentDay"
+                    DateUtils.DATE_LOCALE_FORMAT_2,
+                    "$currentYear$month$day"
                 ), DateUtils.DATE_LOCALE_FORMAT_2
             ) ?: Strings.EMPTY
             val date = LocalDate.parse(dateStr, DateTimeFormatter.BASIC_ISO_DATE)
@@ -78,15 +80,18 @@ class DatePickerDialog : BaseDialog() {
     }
 
     private fun updateDayOfWeek() {
+        val month = if ("$currentMonth".length < 2) "0$currentMonth" else "$currentMonth"
+        val day = if ("$currentDay".length < 2) "0$currentDay" else "$currentDay"
         val dayOfWeek = DateUtils.convertDateToString(
             DateUtils.convertStringToDate(
-                DateUtils.DATE_LOCALE_FORMAT_1,
-                "$currentYear$currentMonth$currentDay"
+                DateUtils.DATE_LOCALE_FORMAT_2,
+                "$currentYear$month$day"
             ), DateUtils.WEEK_DAY_FORMAT
         ) ?: Strings.EMPTY
-        mView.tv_date_picker_day_of_week.text = Constant.Calendar.MAP_DAY_WEEK_TITLE[dayOfWeek.uppercase(
-            Locale.getDefault()
-        )] ?: Strings.EMPTY
+        mView.tv_date_picker_day_of_week.text =
+            Constant.Calendar.MAP_DAY_WEEK_TITLE[dayOfWeek.uppercase(
+                Locale.getDefault()
+            )] ?: Strings.EMPTY
     }
 
     private fun changeTypePicker() {
@@ -95,7 +100,10 @@ class DatePickerDialog : BaseDialog() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         dialog?.setCanceledOnTouchOutside(false)
     }
 

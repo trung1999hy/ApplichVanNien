@@ -21,7 +21,7 @@ object DateUtils {
         if (dateStr.isNullOrEmpty())
             return null
         return try {
-            SimpleDateFormat(format, Locale.ENGLISH).parse(dateStr)
+            SimpleDateFormat(format, Locale.getDefault()).parse(dateStr)
         } catch (e: ParseException) {
 //            Log.e("ConvertDateToString-ParseException: " + e.message)
             null
@@ -31,7 +31,7 @@ object DateUtils {
     fun convertDateToString(date: Date?, format: String): String? {
         if (date == null) return null
         return try {
-            SimpleDateFormat(format, Locale.ENGLISH).format(date)
+            SimpleDateFormat(format, Locale.getDefault()).format(date)
         } catch (e: ParseException) {
 //            Log.e("ConvertDateToString-ParseException: " + e.message)
             null
