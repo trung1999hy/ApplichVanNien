@@ -13,8 +13,9 @@ import kotlin.math.sin
 object DateUtils {
 
     const val DATE_LOCALE_FORMAT = "yyyy-MM-dd"
+    const val DATE_LOCALE_FORMAT_1 = "yyyyMd"
+    const val DATE_LOCALE_FORMAT_2 = "yyyyMMdd"
     const val WEEK_DAY_FORMAT = "EEEE"
-//    const val DATE_TITLE_FORMAT = "d tháng M, yyyy"
 
     fun convertStringToDate(format: String, dateStr: String?): Date? {
         if (dateStr.isNullOrEmpty())

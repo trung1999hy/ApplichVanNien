@@ -9,7 +9,7 @@ object Constant {
    const val TIME_MILLISECOND_400L = 400L
 
    object Calendar {
-      const val NUMBER_ADD_MONTH_TO_CALENDAR = 100L
+      const val NUMBER_ADD_MONTH_TO_CALENDAR = 1L
       const val NUMBER_ADD_WEEK_TO_CALENDAR = 100L
       val MAP_DAY_WEEK_TITLE: MutableMap<String, String> = mutableMapOf(
          "MONDAY" to "Thứ Hai",

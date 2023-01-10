@@ -20,6 +20,7 @@ import java.time.format.TextStyle
 import java.util.*
 import androidx.lifecycle.Observer
 import com.example.universalcalendar.common.Constant
+import com.example.universalcalendar.ui.dialog.DatePickerDialog
 
 class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthViewModel>() {
 
@@ -67,6 +68,24 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
         }
         binding.monthCalendar.monthScrollListener = {
             updateMonthAfterScroll(it.yearMonth)
+        }
+        initAction()
+    }
+
+    private fun initAction() {
+        binding.llChooseMonth.setOnClickListener {
+            val dialogDatePicker = DatePickerDialog.newInstance()
+            dialogDatePicker.apply {
+                datePickerCallback = {
+                    currentMonth = YearMonth.from(it)
+                    binding.monthCalendar.notifyDateChanged(selectedDate ?: it)
+                    selectedDate = it
+                    binding.monthCalendar.notifyDateChanged(it)
+                    viewModel.updateCurrentDayDto(selectedDate)
+                    binding.monthCalendar.smoothScrollToMonth(currentMonth)
+                }
+            }
+            dialogDatePicker.shows(childFragmentManager)
         }
     }
 
@@ -119,10 +138,11 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
     }
 
     private fun updateTitleCurrentDate(dayDto: DayDto) {
+        val dayOfWeekTitle = Constant.Calendar.MAP_DAY_WEEK_TITLE[dayDto.dayOfWeek?.uppercase(Locale.getDefault())] ?: Strings.EMPTY
         val monthContentTimeTitle = "${dayDto.day} Tháng ${dayDto.month}, ${dayDto.year}"
-        val monthTitleHeader = "${dayDto.dayOfWeek}, $monthContentTimeTitle"
+        val monthTitleHeader = "$dayOfWeekTitle, $monthContentTimeTitle"
         binding.tvMonthSelectTitle.text = monthTitleHeader
-        binding.monthDateDetailTitle.text = dayDto.dayOfWeek?.uppercase(Locale.getDefault()) ?: Strings.EMPTY
+        binding.monthDateDetailTitle.text =  dayOfWeekTitle
         binding.monthDateDetailPositive.text = monthContentTimeTitle
     }
 

@@ -13,7 +13,7 @@ class SharePreference {
     companion object {
         const val MY_PREFERENCES = "MyPrefs"
     }
-    val mPrefs: SharedPreferences = CalendarApplication.getInstance().getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE)
+    val mPrefs: SharedPreferences = CalendarApplication.context().getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE)
 
     fun getQuote(): List<Quotation>? {
         val quoteKey = mPrefs.getString(Constant.KEY_QUOTE, "") ?: ""
