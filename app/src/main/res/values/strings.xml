@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Universal Calendar</string>
+    <string name="app_name">Lịch thiên niên kỷ</string>
     <string name="tv_calendar_day">Lịch ngày</string>
     <string name="tv_calendar_month">Lịch tháng</string>
     <string name="tv_setting">cài đặt</string>
@@ -9,4 +9,8 @@
     <string name="tv_author_demo">Sưu tầm</string>
     <string name="tv_hoang_dao">Ngày Hoàng Đạo</string>
     <string name="tv_hac_dao">Ngày Hắc Đạo</string>
+    <string name="tv_solar_term">Tiết khí</string>
+    <string name="tv_depart">Xuất hành</string>
+    <string name="tv_star">Sao tốt sao xấu</string>
+    <string name="tv_nhi_thap">Nhị thập bát cú </string>
 </resources>

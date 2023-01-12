@@ -1,20 +1,21 @@
 package com.example.universalcalendar.ui.feature.daycalendar
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
 import androidx.core.content.ContextCompat
 import com.example.universalcalendar.R
 import com.example.universalcalendar.common.Constant
 import com.example.universalcalendar.databinding.FragmentDayCalendarBinding
-import com.example.universalcalendar.extensions.DateUtils
-import com.example.universalcalendar.extensions.Utils
-import com.example.universalcalendar.extensions.formatDateTime
+import com.example.universalcalendar.extensions.*
 import com.example.universalcalendar.model.Quotation
 import com.example.universalcalendar.model.Quote
 import com.example.universalcalendar.ui.base.BaseFragment
+import com.example.universalcalendar.ui.dialog.DatePickerDialog
 import com.example.universalcalendar.widgets.OnSwipeTouchListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -23,6 +24,14 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewModel>() {
+    companion object {
+        const val DAY_LUNAR = "day_lunar"
+        const val MONTH_LUNAR = "month_lunar"
+        const val YEAR_LUNAR = "year_lunar"
+        const val DAY_SOLAR = "day_solar"
+        const val MONTH_SOLAR = "month_solar"
+        const val YEAR_SOLAR = "year_solar"
+    }
     private var daySolar = 0
     private var monthSolar = 0
     private var yearSolar = 0
@@ -47,6 +56,10 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
         setQuote()
         setImageBackground()
         loadDataWhenSwipe()
+        binding.linearLayout.setOnClickListener {
+            val datePickerDialog = DatePickerDialog.newInstance()
+            datePickerDialog.shows(childFragmentManager)
+        }
     }
 
     private fun getListQuoteFromAsset() {
@@ -60,31 +73,31 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun setImageBackground() {
-        if (image_background != null) {
+        if (binding.imageBackground != null) {
             try {
                 when (Random().nextInt(5)) {
                     0 -> {
-                        image_background.setImageDrawable(resources.getDrawable(R.drawable.bg_lich0))
+                        binding.imageBackground.setImageDrawable(resources.getDrawable(R.drawable.bg_lich0))
                     }
 
                     1 -> {
-                        image_background.setImageDrawable(resources.getDrawable(R.drawable.bg_lich1))
+                        binding.imageBackground.setImageDrawable(resources.getDrawable(R.drawable.bg_lich1))
                     }
 
                     2 -> {
-                        image_background.setImageDrawable(resources.getDrawable(R.drawable.bg_lich2))
+                        binding.imageBackground.setImageDrawable(resources.getDrawable(R.drawable.bg_lich2))
                     }
 
                     3 -> {
-                        image_background.setImageDrawable(resources.getDrawable(R.drawable.bg_lich3))
+                        binding.imageBackground.setImageDrawable(resources.getDrawable(R.drawable.bg_lich3))
                     }
 
                     4 -> {
-                        image_background.setImageDrawable(resources.getDrawable(R.drawable.bg_lich4))
+                        binding.imageBackground.setImageDrawable(resources.getDrawable(R.drawable.bg_lich4))
                     }
 
                     else -> {
-                        image_background.setImageDrawable(resources.getDrawable(R.drawable.bg_lich0))
+                        binding.imageBackground.setImageDrawable(resources.getDrawable(R.drawable.bg_lich0))
                     }
                 }
             } catch (e: Exception) {
@@ -95,23 +108,25 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
 
     private fun setQuote() {
         val randomQuote = Random().nextInt(mListQuotation.size)
-        tv_quote.text = mListQuotation[randomQuote].quote
-        tv_author.text = mListQuotation[randomQuote].author
+        binding.tvQuote.text = mListQuotation[randomQuote].quote
+        binding.tvAuthor.text = mListQuotation[randomQuote].author
     }
 
     @SuppressLint("SetTextI18n")
     private fun loadDataCalendar(daySolar: Int, monthSolar: Int, yearSolar: Int) {
         val lunarDay = DateUtils.convertSolar2Lunar(daySolar, monthSolar, yearSolar, 7.00)
-        tv_hour.formatDateTime(calendar.time)
-        tv_day_solar.text = daySolar.toString()
-        tv_day_lunar.text = lunarDay[0].toString()
-        tv_month_lunar.text = "Tháng ${lunarDay[1]}"
+        binding.tvHour.formatDateTime(calendar.time)
+        binding.tvDaySolar.text = if (daySolar < 10) "0${daySolar}" else "$daySolar"
+        binding.tvDayLunar.text = lunarDay[0].toString()
+        binding.tvMonthLunar.text = "Tháng ${lunarDay[1]}"
         //calculate canchiday using solar date
-        day_can_chi.text = DateUtils.getCanChiDayLunar(daySolar, monthSolar, yearSolar)
-        month_can_chi.text = DateUtils.getCanChiForMonth(lunarDay[1], lunarDay[2])
-        year_can_chi.text = "Năm ${DateUtils.getCanYearLunar(lunarDay[2])} ${DateUtils.getChiYearLunar(lunarDay[2])}"
-        dayOfWeek.text = DateUtils.getWeek(yearSolar, monthSolar, daySolar)
-
+        binding.dayCanChi.text = "Ngày ${DateUtils.getCanChiDayLunar(daySolar, monthSolar, yearSolar)}"
+        binding.monthCanChi.text = "Tháng ${DateUtils.getCanChiForMonth(lunarDay[1], lunarDay[2])}"
+        binding.yearCanChi.text = "Năm ${DateUtils.getCanYearLunar(lunarDay[2])} ${DateUtils.getChiYearLunar(lunarDay[2])}"
+        binding.dayOfWeek.text = DateUtils.getWeek(yearSolar, monthSolar, daySolar)
+        updateTitleCurrentDate(monthSolar, yearSolar)
+        if (isCurrentDate(daySolar, monthSolar, yearSolar)) binding.frameCurrentDate.visibility = View.GONE
+        binding.frameCurrentDate.visibility = View.VISIBLE
         val isGoodDay = DateUtils.isGoodDay(
             DateUtils.getChiDayLunar(daySolar, monthSolar, yearSolar),
             lunarDay[1]
@@ -123,19 +138,19 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
         )
 
         if (isGoodDay) {
-            tv_status_day.text = resources.getString(R.string.tv_hoang_dao)
-            tv_status_day.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+            binding.tvStatusDay.text = resources.getString(R.string.tv_hoang_dao)
+            binding.tvStatusDay.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
         } else if (isBadDay) {
-            tv_status_day.text = resources.getString(R.string.tv_hac_dao)
-            tv_status_day.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray))
+            binding.tvStatusDay.text = resources.getString(R.string.tv_hac_dao)
+            binding.tvStatusDay.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray))
         } else {
-            tv_status_day.text = Constant.EMPTY
+            binding.tvStatusDay.text = Constant.EMPTY
         }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun loadDataWhenSwipe() {
-        image_background.setOnTouchListener(object : OnSwipeTouchListener(activity) {
+        binding.imageBackground.setOnTouchListener(object : OnSwipeTouchListener(activity) {
             override fun onSwipeRight() {
                 loadDataCalendar(daySolar, monthSolar, yearSolar)
                 calendar.add(5, -1)
@@ -174,10 +189,23 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
                 calendar.get(5).also { daySolar = it }
                 (calendar.get(2) + 1).also { monthSolar = it }
                 calendar.get(1).also { yearSolar = it }
-                loadDataCalendar(daySolar, monthSolar, yearSolar,)
+                loadDataCalendar(daySolar, monthSolar, yearSolar)
                 animationBottomSwipe()
                 setImageBackground()
                 setQuote()
+            }
+
+            override fun onClick() {
+                val intent = Intent(context, DetailDayCalendarActivity::class.java)
+                val bundle = Bundle()
+                bundle.apply {
+                    putInt(DAY_SOLAR, daySolar)
+                    putInt(MONTH_SOLAR, monthSolar)
+                    putInt(YEAR_SOLAR, yearSolar)
+                }
+                intent.putExtras(bundle)
+                startActivity(intent)
+                super.onClick()
             }
         })
 
@@ -186,8 +214,8 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
     private fun animationLeftSwipe() {
         val translationAnimation = TranslateAnimation(0f, (-getWidthScreen().toFloat()), 0f, 0f)
         translationAnimation.duration = Constant.TIME_MILLISECOND_400L
-        card_lunar.startAnimation(translationAnimation)
-        linearLayout2.startAnimation(translationAnimation)
+        binding.cardLunar.startAnimation(translationAnimation)
+        binding.linearLayout2.startAnimation(translationAnimation)
         translationAnimation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(p0: Animation?) {
 
@@ -207,8 +235,8 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
                     0f
                 )
                 translateAnimation.duration = Constant.TIME_MILLISECOND_400L
-                card_lunar.startAnimation(translateAnimation)
-                linearLayout2.startAnimation(translateAnimation)
+                binding.cardLunar.startAnimation(translateAnimation)
+                binding.linearLayout2.startAnimation(translateAnimation)
             }
 
             override fun onAnimationRepeat(p0: Animation?) {
@@ -221,8 +249,8 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
     private fun animationRightSwipe() {
         val translationAnimation = TranslateAnimation(0f, getWidthScreen().toFloat(), 0f, 0f)
         translationAnimation.duration = Constant.TIME_MILLISECOND_400L
-        card_lunar.startAnimation(translationAnimation)
-        linearLayout2.startAnimation(translationAnimation)
+        binding.cardLunar.startAnimation(translationAnimation)
+        binding.linearLayout2.startAnimation(translationAnimation)
         translationAnimation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(p0: Animation?) {
 
@@ -242,8 +270,8 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
                     0f
                 )
                 translateAnimation.duration = Constant.TIME_MILLISECOND_400L
-                card_lunar.startAnimation(translateAnimation)
-                linearLayout2.startAnimation(translateAnimation)
+                binding.cardLunar.startAnimation(translateAnimation)
+                binding.linearLayout2.startAnimation(translateAnimation)
             }
 
             override fun onAnimationRepeat(p0: Animation?) {
@@ -256,19 +284,33 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
     private fun animationTopSwipe() {
         val translationAnimation = TranslateAnimation(0f, 0f, 450f, 0f)
         translationAnimation.duration = Constant.TIME_MILLISECOND_400L
-        tv_day_solar.startAnimation(translationAnimation)
-        linearLayout2.startAnimation(translationAnimation)
+        binding.tvDaySolar.startAnimation(translationAnimation)
+        binding.linearLayout2.startAnimation(translationAnimation)
     }
 
     private fun animationBottomSwipe() {
         val translationAnimation = TranslateAnimation(0f, 0f, -450f, 0f)
         translationAnimation.duration = Constant.TIME_MILLISECOND_400L
-        tv_day_solar.startAnimation(translationAnimation)
-        linearLayout2.startAnimation(translationAnimation)
+        binding.tvDaySolar.startAnimation(translationAnimation)
+        binding.linearLayout2.startAnimation(translationAnimation)
+    }
+
+    private fun updateTitleCurrentDate(monthSolar: Int, yearSolar: Int) {
+        val currentDateString = "Tháng $monthSolar - $yearSolar"
+        binding.tvCurrentDate.text = currentDateString
+    }
+
+    private fun isCurrentDate(daySolar: Int, monthSolar: Int, yearSolar: Int): Boolean {
+        return daySolar == DateUtils.getDay() && monthSolar == DateUtils.getMonth() && yearSolar == DateUtils.getYear()
     }
 
     override fun initData() {
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.tvHour.formatDateTime(calendar.time)
     }
 
 }
