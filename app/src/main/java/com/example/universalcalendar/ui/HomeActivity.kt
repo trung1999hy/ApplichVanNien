@@ -1,7 +1,13 @@
 package com.example.universalcalendar.ui
 
+import android.content.Context
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -15,6 +21,7 @@ import com.example.universalcalendar.ui.feature.event.EventFragment
 import com.example.universalcalendar.ui.feature.monthcalendar.MonthCalendarFragment
 import com.example.universalcalendar.ui.feature.setting.SettingFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+
 
 class HomeActivity : BaseActivity<ActivityHomeBinding>(), NavController.OnDestinationChangedListener {
 
@@ -86,10 +93,18 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(), NavController.OnDestin
     ) {
         invalidateOptionsMenu()
         when (destination.id) {
-            R.id.day_fragment -> {}
-            R.id.month_fragment -> {}
-            R.id.event_fragment-> {}
-            R.id.setting_fragment -> {}
+            R.id.day_fragment -> {
+                binding.bottomNav.menu.getItem(0).isChecked = true
+            }
+            R.id.month_fragment -> {
+                binding.bottomNav.menu.getItem(1).isChecked = true
+            }
+            R.id.event_fragment-> {
+                binding.bottomNav.menu.getItem(2).isChecked = true
+            }
+            R.id.setting_fragment -> {
+                binding.bottomNav.menu.getItem(3).isChecked = true
+            }
             else -> {}
         }
     }
@@ -114,9 +129,36 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(), NavController.OnDestin
         activeFragment = settingFragment
     }
 
+    fun navigateToEventSetupScreen() {
+        navController.navigate(R.id.event_register_fragment)
+    }
+
+    fun onShowBottonBar(isShow: Boolean) {
+        binding.bottomNav.visibility = if (isShow) View.VISIBLE else View.GONE
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         navController.navigateUp()
         return true
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (ev != null) {
+            if (ev.action == MotionEvent.ACTION_DOWN) {
+                val v = currentFocus
+                if (v is EditText) {
+                    val outRect = Rect()
+                    v.getGlobalVisibleRect(outRect)
+                    if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+                        v.clearFocus()
+                        val imm: InputMethodManager =
+                            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0)
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     override fun onBackPressed() {

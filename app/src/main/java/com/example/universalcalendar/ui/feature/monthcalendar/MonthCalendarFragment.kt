@@ -2,6 +2,7 @@ package com.example.universalcalendar.ui.feature.monthcalendar
 
 import android.graphics.Color
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.children
 import com.example.universalcalendar.R
@@ -19,16 +20,30 @@ import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.*
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.universalcalendar.common.Constant
+import com.example.universalcalendar.extensions.DateUtils
+import com.example.universalcalendar.extensions.SharePreference
+import com.example.universalcalendar.extensions.click
+import com.example.universalcalendar.model.Event
+import com.example.universalcalendar.ui.HomeActivity
+import com.example.universalcalendar.ui.adapter.EventAdapter
 import com.example.universalcalendar.ui.dialog.DatePickerDialog
+import com.example.universalcalendar.ui.feature.monthcalendar.entities.EventDto
+import kotlinx.android.synthetic.main.fragment_day_calendar.view.*
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthViewModel>() {
 
     private var selectedDate: LocalDate? = null
+    private var birthDayDate: LocalDate? = null
     private lateinit var currentMonth: YearMonth
     private lateinit var startMonth: YearMonth
     private lateinit var endMonth: YearMonth
+    private var listEvent: ArrayList<EventDto> = arrayListOf()
+    private var adapter: EventAdapter? = null
 
     override fun getViewModelClass(): Class<MonthViewModel> = MonthViewModel::class.java
 
@@ -55,6 +70,10 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
             override fun bind(container: DayViewContainer, data: CalendarDay) {
                 container.day = data
                 container.textView.text = data.date.dayOfMonth.toString()
+                if (data.date == birthDayDate) {
+                    container.imageView1.visibility = View.VISIBLE
+                    container.imageView2.visibility = View.VISIBLE
+                }
                 if (data.position == DayPosition.MonthDate) {
                     container.textView.setTextColor(Color.BLACK)
                     when (data.date) {
@@ -70,11 +89,10 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
         binding.monthCalendar.monthScrollListener = {
             updateMonthAfterScroll(it.yearMonth)
         }
-        initAction()
     }
 
-    private fun initAction() {
-        binding.llChooseMonth.setOnClickListener {
+    override fun initAction() {
+        binding.llChooseMonth.click {
             val dialogDatePicker = DatePickerDialog.newInstance()
             dialogDatePicker.apply {
                 datePickerCallback = {
@@ -96,9 +114,30 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
             }
             dialogDatePicker.shows(childFragmentManager)
         }
+        binding.icMonthAddEvent.click {
+            (activity as HomeActivity).navigateToEventSetupScreen()
+        }
+    }
+
+    override fun initAdapter() {
+        adapter = EventAdapter(listEvent)
+        binding.rvMonthCalendarEvents.layoutManager = LinearLayoutManager(context)
+        binding.rvMonthCalendarEvents.adapter = adapter
+        viewModel.currentEventDto().observe(viewLifecycleOwner, Observer {
+            updateListEventCurrentDate(it)
+        })
+        viewModel.currentDayDto().observe(viewLifecycleOwner, Observer {
+            updateTitleCurrentDate(it)
+        })
     }
 
     override fun initData() {
+        val userInfor = SharePreference.getInstance().getUserInformation()
+        if (userInfor != null) {
+            val dateOfBirth = userInfor.dateOfBirth ?: ""
+            birthDayDate = LocalDate.parse("$dateOfBirth", DateTimeFormatter.BASIC_ISO_DATE)
+        }
+        viewModel.fetchDataEvent(context)
         binding.monthCalendarViewModel = viewModel
         currentMonth = YearMonth.now()
         selectedDate = LocalDate.now()
@@ -124,9 +163,6 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
                 }
             }
         }
-        viewModel.currentDayDto().observe(viewLifecycleOwner, Observer {
-            updateTitleCurrentDate(it)
-        })
     }
 
     private fun updateMonthAfterScroll(monthCalendar: YearMonth) {
@@ -147,12 +183,34 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
     }
 
     private fun updateTitleCurrentDate(dayDto: DayDto) {
+        val lunarDay = DateUtils.convertSolar2Lunar(dayDto.day, dayDto.month, dayDto.year, 7.00)
         val dayOfWeekTitle = Constant.Calendar.MAP_DAY_WEEK_TITLE[dayDto.dayOfWeek?.uppercase(Locale.getDefault())] ?: Strings.EMPTY
         val monthContentTimeTitle = "${dayDto.day} Tháng ${dayDto.month}, ${dayDto.year}"
         val monthTitleHeader = "$dayOfWeekTitle, $monthContentTimeTitle"
+        val monthLunar = DateUtils.getCanChiForMonth(lunarDay[1], lunarDay[2])
+        val yearLunar = "Năm ${DateUtils.getCanYearLunar(lunarDay[2])} ${DateUtils.getChiYearLunar(lunarDay[2])}"
+        val dayLunar = "${lunarDay[0]} $monthLunar, $yearLunar"
         binding.tvMonthSelectTitle.text = monthTitleHeader
         binding.monthDateDetailTitle.text =  dayOfWeekTitle
         binding.monthDateDetailPositive.text = monthContentTimeTitle
+        binding.monthDayDetailLunar.text = dayLunar
+        binding.tvDayNameLunar.text = DateUtils.getCanChiDayLunar(dayDto.day, dayDto.month, dayDto.year)
+        binding.tvMonthNameLunar.text = monthLunar
+        binding.tvYearNameLunar.text = yearLunar
+    }
+
+    private fun updateListEventCurrentDate(events: ArrayList<EventDto>) {
+        if (events.isNotEmpty()) {
+            listEvent.clear()
+            binding.tvMonthListEventEmpty.visibility = View.GONE
+            binding.rvMonthCalendarEvents.visibility = View.VISIBLE
+            listEvent.addAll(events)
+            adapter?.refreshData(listEvent)
+        } else {
+            binding.rvMonthCalendarEvents.visibility = View.GONE
+            binding.tvMonthListEventEmpty.visibility = View.VISIBLE
+        }
+
     }
 
     private fun addNextMonthToCalendar(number: Long = Constant.Calendar.NUMBER_ADD_MONTH_TO_CALENDAR) {

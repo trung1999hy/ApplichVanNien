@@ -7,6 +7,7 @@ import com.example.universalcalendar.R
 import com.example.universalcalendar.common.Constant
 import com.example.universalcalendar.common.Strings
 import com.example.universalcalendar.extensions.DateUtils
+import com.example.universalcalendar.extensions.click
 import com.example.universalcalendar.ui.base.BaseDialog
 import kotlinx.android.synthetic.main.date_picker_dialog.view.datePicker
 import kotlinx.android.synthetic.main.date_picker_dialog.view.ic_check_date
@@ -47,7 +48,7 @@ class DatePickerDialog : BaseDialog() {
         currentMonth = today.get(Calendar.MONTH) + 1
         currentYear = today.get(Calendar.YEAR)
         updateDayOfWeek()
-        mView.datePicker.init(
+        mView.datePicker?.init(
             currentYear, currentMonth - 1, currentDay
         ) { _, year, month, day ->
             currentDay = day
@@ -55,8 +56,8 @@ class DatePickerDialog : BaseDialog() {
             currentYear = year
             updateDayOfWeek()
         }
-        mView.ic_close_date_picker?.setOnClickListener { dismissDialog() }
-        mView.ic_check_date?.setOnClickListener {
+        mView.ic_close_date_picker?.click { dismissDialog() }
+        mView.ic_check_date?.click {
             val month = if ("$currentMonth".length < 2) "0$currentMonth" else "$currentMonth"
             val day = if ("$currentDay".length < 2) "0$currentDay" else "$currentDay"
             val dateStr = DateUtils.convertDateToString(
@@ -70,10 +71,10 @@ class DatePickerDialog : BaseDialog() {
             dismissDialog()
         }
         val typePicker = mView.tv_date_picker_type
-        typePicker.minValue = 0
-        typePicker.maxValue = 1
-        typePicker.displayedValues = TYPE_PICKER
-        typePicker.setOnValueChangedListener { _, _, newVal ->
+        typePicker?.minValue = 0
+        typePicker?.maxValue = 1
+        typePicker?.displayedValues = TYPE_PICKER
+        typePicker?.setOnValueChangedListener { _, _, newVal ->
             typePickStatus = TYPE_PICKER[newVal]
             changeTypePicker()
         }
@@ -88,7 +89,7 @@ class DatePickerDialog : BaseDialog() {
                 "$currentYear$month$day"
             ), DateUtils.WEEK_DAY_FORMAT
         ) ?: Strings.EMPTY
-        mView.tv_date_picker_day_of_week.text =
+        mView.tv_date_picker_day_of_week?.text =
             Constant.Calendar.MAP_DAY_WEEK_TITLE[dayOfWeek.uppercase(
                 Locale.getDefault()
             )] ?: Strings.EMPTY

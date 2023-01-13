@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_month_fragment_to_setting_fragment"
             app:destination="@id/setting_fragment" />
+        <action
+            android:id="@+id/action_month_fragment_to_event_register_fragment"
+            app:destination="@id/event_register_fragment" />
     </fragment>
     <fragment
         android:id="@+id/event_fragment"
@@ -48,6 +51,9 @@
         <action
             android:id="@+id/action_event_fragment_to_month_fragment"
             app:destination="@id/month_fragment" />
+        <action
+            android:id="@+id/action_event_fragment_to_event_register_fragment"
+            app:destination="@id/event_register_fragment" />
     </fragment>
     <fragment
         android:id="@+id/setting_fragment"
@@ -63,5 +69,11 @@
         <action
             android:id="@+id/action_setting_fragment_to_event_fragment"
             app:destination="@id/event_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/event_register_fragment"
+        android:name="com.example.universalcalendar.ui.feature.eventregister.EventRegisterFragment"
+        android:label="Event Setup Fragment"
+        tools:layout="@layout/fragment_event_register">
     </fragment>
 </navigation>

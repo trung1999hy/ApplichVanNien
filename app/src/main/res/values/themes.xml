@@ -13,4 +13,7 @@
         <item name="android:statusBarColor">?attr/colorOnPrimary</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="SwitchCompatCustom" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/dark_blue</item>
+    </style>
 </resources>

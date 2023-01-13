@@ -17,9 +17,9 @@ class EventViewModel : ViewModel() {
         val dateNow = date ?: LocalDate.now()
         _currentDayDto.value = DayDto(
             dayOfWeek = dateNow.dayOfWeek.toString(),
-            day = dateNow.dayOfMonth.toString(),
-            month = dateNow.monthValue.toString(),
-            year = dateNow.year.toString()
+            day = dateNow.dayOfMonth,
+            month = dateNow.monthValue,
+            year = dateNow.year
         )
     }
 }
