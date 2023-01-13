@@ -15,6 +15,15 @@ fun TextView.formatDateTime(dateTime: Date) {
     }, Constant.TIME_MILLISECOND_1000L)
 }
 
+fun View.visible(): Boolean {
+    return this.visibility == View.VISIBLE
+}
+
+fun View.gone(): Boolean {
+    return this.visibility == View.GONE
+}
+
+
 fun View.click(onSafeClick: (View) -> Unit) {
     val safeClickListener = SafeClickListener {
         onSafeClick(it)
