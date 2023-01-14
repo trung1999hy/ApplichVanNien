@@ -677,7 +677,7 @@ object DateUtils {
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("$year-$month-$day 00:00:00")
         calendarInstance.time = date
        return when(calendarInstance.get(7)) {
-            1 -> "Chủ nhật"
+            1 -> "Chủ Nhật"
             2 -> "Thứ hai"
             3 -> "Thứ ba"
             4 -> "Thứ tư"

@@ -17,17 +17,18 @@ import kotlinx.android.synthetic.main.date_picker_dialog.view.tv_date_picker_typ
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class DatePickerDialog : BaseDialog() {
 
     companion object {
-        fun newInstance() = DatePickerDialog()
         private val TYPE_PICKER = arrayOf("Dương", "Âm")
         private const val TYPE_PICKER_AL = "Âm"
         private const val TYPE_PICKER_DL = "Dương"
+        fun newInstance(): DatePickerDialog = DatePickerDialog()
     }
-
+    var listener: DatePickDialogListener?= null
     private lateinit var mView: View
     private var typePickStatus = TYPE_PICKER_DL
     var datePickerCallback: (date: LocalDate) -> Unit = {}
@@ -67,6 +68,7 @@ class DatePickerDialog : BaseDialog() {
                 ), DateUtils.DATE_LOCALE_FORMAT_2
             ) ?: Strings.EMPTY
             val date = LocalDate.parse(dateStr, DateTimeFormatter.BASIC_ISO_DATE)
+            listener?.onUpdateDateAfterPick(day, month, currentYear.toString())
             datePickerCallback.invoke(date)
             dismissDialog()
         }
@@ -114,6 +116,6 @@ class DatePickerDialog : BaseDialog() {
     }
 
     interface DatePickDialogListener {
-        fun onUpdateDateAfterPick(date: LocalDate)
+        fun onUpdateDateAfterPick(solarDay: String, solarMonth: String, solarYear: String)
     }
 }

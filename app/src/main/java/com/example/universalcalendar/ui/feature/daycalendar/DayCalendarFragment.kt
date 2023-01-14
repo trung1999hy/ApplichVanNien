@@ -2,6 +2,7 @@ package com.example.universalcalendar.ui.feature.daycalendar
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -23,7 +24,8 @@ import kotlinx.android.synthetic.main.fragment_day_calendar.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewModel>() {
+class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewModel>(),
+    DatePickerDialog.DatePickDialogListener {
     companion object {
         const val DAY_LUNAR = "day_lunar"
         const val MONTH_LUNAR = "month_lunar"
@@ -32,10 +34,12 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
         const val MONTH_SOLAR = "month_solar"
         const val YEAR_SOLAR = "year_solar"
     }
+
     private var daySolar = 0
     private var monthSolar = 0
     private var yearSolar = 0
     private val mListQuotation = ArrayList<Quotation>()
+    private val datePickerDialog = DatePickerDialog.newInstance()
 
     private lateinit var calendar: Calendar
     override fun getViewModelClass(): Class<DayViewModel> = DayViewModel::class.java
@@ -48,6 +52,7 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
     }
 
     override fun initView() {
+        datePickerDialog.listener = this
         daySolar = calendar.get(5)
         monthSolar = calendar.get(2) + 1
         yearSolar = calendar.get(1)
@@ -57,18 +62,25 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
         setImageBackground()
         loadDataWhenSwipe()
         binding.linearLayout.setOnClickListener {
-            val datePickerDialog = DatePickerDialog.newInstance()
             datePickerDialog.shows(childFragmentManager)
+        }
+        binding.frameCurrentDate.setOnClickListener {
+            loadDataCalendar(
+                calendar.get(5),
+                calendar.get(2) + 1,
+                calendar.get(1)
+            )
         }
     }
 
     private fun getListQuoteFromAsset() {
-            val type = object : TypeToken<List<Quote>>() {}.type
-            val jsonFromAssets = Utils.getDataFromAsset(requireContext(), Constant.QUOTE) ?: ""
-            val listQuotation = Gson().fromJson<List<Quote>>(jsonFromAssets, type)
-            if (jsonFromAssets.isNotEmpty() && listQuotation != null && listQuotation.isNotEmpty()) {
-                mListQuotation.addAll(listQuotation[Constant.INDEX_DEFAULT].list_dn as List<Quotation>)
-            }
+        mListQuotation.clear()
+        val type = object : TypeToken<List<Quote>>() {}.type
+        val jsonFromAssets = Utils.getDataFromAsset(requireContext(), Constant.QUOTE) ?: ""
+        val listQuotation = Gson().fromJson<List<Quote>>(jsonFromAssets, type)
+        if (jsonFromAssets.isNotEmpty() && listQuotation != null && listQuotation.isNotEmpty()) {
+            mListQuotation.addAll(listQuotation[Constant.INDEX_DEFAULT].list_dn as List<Quotation>)
+        }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -120,12 +132,39 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
         binding.tvDayLunar.text = lunarDay[0].toString()
         binding.tvMonthLunar.text = "Tháng ${lunarDay[1]}"
         //calculate canchiday using solar date
-        binding.dayCanChi.text = "Ngày ${DateUtils.getCanChiDayLunar(daySolar, monthSolar, yearSolar)}"
+        binding.dayCanChi.text =
+            "Ngày ${DateUtils.getCanChiDayLunar(daySolar, monthSolar, yearSolar)}"
         binding.monthCanChi.text = "Tháng ${DateUtils.getCanChiForMonth(lunarDay[1], lunarDay[2])}"
-        binding.yearCanChi.text = "Năm ${DateUtils.getCanYearLunar(lunarDay[2])} ${DateUtils.getChiYearLunar(lunarDay[2])}"
+        binding.yearCanChi.text =
+            "Năm ${DateUtils.getCanYearLunar(lunarDay[2])} ${DateUtils.getChiYearLunar(lunarDay[2])}"
         binding.dayOfWeek.text = DateUtils.getWeek(yearSolar, monthSolar, daySolar)
+        if (binding.dayOfWeek.text == Constant.Calendar.MAP_DAY_WEEK_TITLE["SUNDAY"]) {
+            binding.tvDaySolar.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+            binding.tvDayLunar.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+            binding.tvMonthLunar.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+        } else {
+            binding.tvDaySolar.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.blue_normal
+                )
+            )
+            binding.tvDayLunar.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.blue_normal
+                )
+            )
+            binding.tvMonthLunar.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.blue_normal
+                )
+            )
+        }
         updateTitleCurrentDate(monthSolar, yearSolar)
-        if (isCurrentDate(daySolar, monthSolar, yearSolar)) binding.frameCurrentDate.visibility = View.GONE
+        if (isCurrentDate(daySolar, monthSolar, yearSolar)) binding.frameCurrentDate.visibility =
+            View.GONE
         binding.frameCurrentDate.visibility = View.VISIBLE
         val isGoodDay = DateUtils.isGoodDay(
             DateUtils.getChiDayLunar(daySolar, monthSolar, yearSolar),
@@ -311,6 +350,17 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
     override fun onResume() {
         super.onResume()
         binding.tvHour.formatDateTime(calendar.time)
+    }
+
+    override fun onUpdateDateAfterPick(solarDay: String, solarMonth: String, solarYear: String) {
+        try {
+            daySolar = solarDay.toInt()
+            monthSolar = solarMonth.toInt()
+            yearSolar = solarYear.toInt()
+            loadDataCalendar(daySolar, monthSolar, yearSolar)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
     }
 
 }

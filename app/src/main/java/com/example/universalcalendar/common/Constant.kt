@@ -6,6 +6,8 @@ object Constant {
    const val KEY_QUOTE = "key_quote"
    const val KEY_USER_INFORMATION = "user_information"
    const val QUOTE = "quote.json"
+   const val CUSTOMS = "phongtuc.json"
+   const val FESTIVAL = "lehoi.json"
    const val TIME_MILLISECOND_1000L = 1000L
    const val TIME_MILLISECOND_400L = 400L
 
