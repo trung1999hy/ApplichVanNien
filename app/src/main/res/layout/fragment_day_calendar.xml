@@ -45,23 +45,6 @@
 
         </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/frame_current_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/bg_monthly"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_medium"
-                android:text="@string/tv_today"
-                android:textColor="@color/blue_normal" />
-        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/frame_day"

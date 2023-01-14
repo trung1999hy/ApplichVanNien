@@ -21,6 +21,12 @@
         <activity  android:name=".ui.feature.setting.pt.DetailCustomsActivity" />
         <activity  android:name=".ui.feature.setting.festival.ListFestivalActivity" />
         <activity  android:name=".ui.feature.setting.festival.FestivalDetailActivity" />
+        <activity  android:name=".ui.feature.setting.vows.ListVowsActivity" />
+        <activity  android:name=".ui.feature.setting.vows.DetailVowsActivity" />
+        <activity  android:name=".ui.feature.setting.business.ListPTBusinessActivity" />
+        <activity  android:name=".ui.feature.setting.business.DetailPTBusinessActivity" />
+        <activity  android:name=".ui.feature.setting.knowledge.ListKnowledgeActivity" />
+        <activity  android:name=".ui.feature.setting.knowledge.DetailKnowledgeActivity" />
         <activity android:name=".ui.feature.splash.SplashScreenActivity"
             android:exported="true">
             <intent-filter>

@@ -64,13 +64,6 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
         binding.linearLayout.setOnClickListener {
             datePickerDialog.shows(childFragmentManager)
         }
-        binding.frameCurrentDate.setOnClickListener {
-            loadDataCalendar(
-                calendar.get(5),
-                calendar.get(2) + 1,
-                calendar.get(1)
-            )
-        }
     }
 
     private fun getListQuoteFromAsset() {
@@ -163,9 +156,6 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
             )
         }
         updateTitleCurrentDate(monthSolar, yearSolar)
-        if (isCurrentDate(daySolar, monthSolar, yearSolar)) binding.frameCurrentDate.visibility =
-            View.GONE
-        binding.frameCurrentDate.visibility = View.VISIBLE
         val isGoodDay = DateUtils.isGoodDay(
             DateUtils.getChiDayLunar(daySolar, monthSolar, yearSolar),
             lunarDay[1]
