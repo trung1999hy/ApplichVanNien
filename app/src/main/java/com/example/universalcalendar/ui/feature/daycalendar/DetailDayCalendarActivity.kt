@@ -38,6 +38,7 @@ class DetailDayCalendarActivity : BaseActivity<ActivityDayDetailBinding>() {
         binding.tvDepart.text = DateUtils.getDepart(daySolar, monthSolar, yearSolar)
         binding.tvStar.text = Html.fromHtml(DateUtils.getStatusStar(yearSolar, lunarDay[1], lunarDay[0], monthSolar, daySolar))
         binding.tvNhiThap.text = Html.fromHtml(DateUtils.getTimeBetween(daySolar, monthSolar, yearSolar))
+        binding.tvHourGood.text = DateUtils.getTimeGoodHour(daySolar, monthSolar, yearSolar)
     }
 
     private fun setTextDayHD(lunarDay: IntArray) {

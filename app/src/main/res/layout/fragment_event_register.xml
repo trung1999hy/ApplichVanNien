@@ -89,7 +89,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:drawableLeft="@drawable/ic_location"
+                android:drawableLeft="@drawable/ic_location_festival"
                 android:drawablePadding="10dp"
                 android:drawableTint="@color/orange"
                 android:hint="Địa điểm (không bắt buộc)"

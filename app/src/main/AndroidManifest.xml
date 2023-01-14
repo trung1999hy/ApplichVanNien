@@ -20,6 +20,7 @@
         <activity  android:name=".ui.feature.setting.pt.ListCustomsActivity" />
         <activity  android:name=".ui.feature.setting.pt.DetailCustomsActivity" />
         <activity  android:name=".ui.feature.setting.festival.ListFestivalActivity" />
+        <activity  android:name=".ui.feature.setting.festival.FestivalDetailActivity" />
         <activity android:name=".ui.feature.splash.SplashScreenActivity"
             android:exported="true">
             <intent-filter>

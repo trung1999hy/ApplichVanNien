@@ -20,4 +20,6 @@
     <string name="tv_knowledge_pt">Kiến thức phong thủy</string>
     <string name="tv_convert_hour">Đổi giờ các nước</string>
     <string name="tv_vows">Văn khấn</string>
+    <string name="tv_location">Hướng</string>
+    <string name="tv_hour_good">Giờ hoàng đạo</string>
 </resources>

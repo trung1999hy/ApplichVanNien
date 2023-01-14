@@ -2,9 +2,9 @@
 
 package com.example.universalcalendar.extensions
 
-import android.util.Log
 import com.example.universalcalendar.common.Constant
 import com.example.universalcalendar.common.Strings.EMPTY
+import com.example.universalcalendar.model.HourGood
 import java.text.Normalizer
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -80,6 +80,20 @@ object DateUtils {
     // 10 Heavenly Stems
     // Vietnamese Heavenly Stems (or "Thiên Can")
     private val calendarInstance = Calendar.getInstance()
+    private val ICON_CHI = arrayOf(
+        "ico_giap_ty_chuot.png",
+        "ico_giap_suu.png",
+        "ico_giap_dan.png",
+        "ico_giap_mao.png",
+        "ico_giap_thin.png",
+        "ico_giap_ty_ran.png",
+        "ico_giap_ngo.png",
+        "ico_giap_mui.png",
+        "ico_giap_than.png",
+        "ico_giap_dau.png",
+        "ico_giap_tuat.png",
+        "ico_giap_hoi.png"
+    )
     private val CAN = arrayOf(
         "Giáp", "Ất", "Bính", "Đinh", "Mậu", "Kỷ", "Canh",
         "Tân", "Nhâm", "Quý"
@@ -172,6 +186,15 @@ object DateUtils {
         315,
         330,
         345
+    )
+
+    private val GIO_HD = arrayOf(
+        "110100101100",
+        "001101001011",
+        "110011010010",
+        "101100110100",
+        "001011001101",
+        "010010110011"
     )
     private val arrMinorSolarName = arrayOf(
         "Xuân phân",
@@ -1220,5 +1243,52 @@ object DateUtils {
         sb.append("<br>")
         sb.append(arrListAdvice2[getTimeBetween - 1])
         return sb.toString()
+    }
+
+    fun getTimeGoodHour(solarDay: Int, monthSolar: Int, yearSoloar: Int): String {
+        val str = GIO_HD[((jdn(solarDay, monthSolar, yearSoloar) + 1) % 12) % 6]
+        var count = 0
+        var str2 = EMPTY
+        var count2 = 0
+        while (count < 12) {
+            var count3 = count + 1
+            if (str.substring(count, count3) == "1") {
+                val sb = java.lang.StringBuilder()
+                sb.append(str2 + CHI[count])
+                sb.append(" ")
+                var count4 = count * 2
+                sb.append((count4 + 23) % 24)
+                sb.append("h - ")
+                sb.append((count4 + 1) % 24)
+                sb.append("h")
+                var sb2 = sb.toString()
+                ++count2
+                if (count2 < 6) {
+                    sb2+=", "
+                }
+                str2 = sb2
+            }
+            count = count3
+        }
+        return str2
+    }
+
+    fun getListGioHD(i: Int, i2: Int, i3: Int, list: MutableList<HourGood?>) {
+        list.clear()
+        val str = GIO_HD[(jdn(i, i2, i3) + 1) % 12 % 6]
+        var i4 = 0
+        while (i4 < 12) {
+            val i5 = i4 + 1
+            if (str.substring(i4, i5) == "1") {
+                val sb = StringBuilder()
+                val i6 = i4 * 2
+                sb.append((i6 + 23) % 24)
+                sb.append("-")
+                sb.append((i6 + 1) % 24)
+                sb.append("h")
+                list.add(HourGood(ICON_CHI[i4], CHI[i4], sb.toString()))
+            }
+            i4 = i5
+        }
     }
 }
