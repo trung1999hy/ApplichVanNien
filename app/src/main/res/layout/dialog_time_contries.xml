@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
     android:orientation="vertical">
 
@@ -47,6 +47,16 @@
         android:background="@color/line_border_grey"
         app:layout_constraintBottom_toBottomOf="parent" />
 
+    <EditText
+        android:id="@+id/et_time_countries_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Tìm kiếm"
+        android:textSize="14dp"
+        android:drawableRight="@drawable/ic_search"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="5dp"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_time_countries"
         android:layout_width="match_parent"
@@ -55,11 +65,16 @@
         android:padding="20dp"
         android:visibility="visible" />
 
-    <View
+    <TextView
+        android:id="@+id/ttvFilterError"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/line_border_grey"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"
+        android:text="Không tìm thấy nước, thành phố ph"
+        android:textColor="@color/black"
+        android:textSize="16dp"/>
 
 
 </LinearLayout>
