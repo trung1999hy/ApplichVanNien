@@ -147,9 +147,6 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
         adapter = EventAdapter(listEvent)
         binding.rvMonthCalendarEvents.layoutManager = LinearLayoutManager(context)
         binding.rvMonthCalendarEvents.adapter = adapter
-        viewModel.currentEventDto().observe(viewLifecycleOwner, Observer {
-            updateListEventCurrentDate(it)
-        })
         adapterZodiac = ZodiacAdapter(listZodiac)
         binding.rvMonthCalendarHourZodiac.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.rvMonthCalendarHourZodiac.adapter = adapterZodiac
@@ -221,6 +218,7 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
         binding.tvMonthNameLunar.text = monthLunar
         binding.tvYearNameLunar.text = yearLunar
         viewModel.updateListZodiac()
+        viewModel.updateListCurrentEvent()
     }
 
     private fun updateListEventCurrentDate(events: ArrayList<EventDto>) {

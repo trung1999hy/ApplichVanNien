@@ -120,9 +120,9 @@ class EventViewModel : ViewModel() {
             )
         }
         val listEventSorted = arrayListOf<EventDto>()
-        listEventSorted.addAll(listEventDto.sortedWith(compareBy<EventDto> { it.year }
-            .thenBy { it.month }
-            .thenBy { it.day }
+        listEventSorted.addAll(listEventDto.sortedWith(compareBy<EventDto> { it.year?.toInt() }
+            .thenBy { it.month?.toInt() }
+            .thenBy { it.day?.toInt() }
             .thenBy { it.timeStart }
             .thenBy { it.timeEnd }))
         _mListCurrentEventDto.value = listEventSorted

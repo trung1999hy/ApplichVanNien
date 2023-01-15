@@ -46,7 +46,6 @@ class MonthViewModel : ViewModel() {
             month = dateNow.monthValue,
             year = dateNow.year
         ))
-        updateListCurrentEvent()
     }
 
     fun fetchDataEvent(context: Context?) {
@@ -72,7 +71,7 @@ class MonthViewModel : ViewModel() {
         updateListCurrentEvent()
     }
 
-    private fun updateListCurrentEvent() {
+    fun updateListCurrentEvent() {
         if (mListEventDto.isEmpty()) return
         val listEventByDate = mListEventDto.filter { event ->
             event.monthSolar == _currentDayDto.value?.month &&
@@ -123,9 +122,9 @@ class MonthViewModel : ViewModel() {
             )
         }
         val listEventSorted = arrayListOf<EventDto>()
-        listEventSorted.addAll(listEventDto.sortedWith(compareBy<EventDto> { it.year }
-            .thenBy { it.month }
-            .thenBy { it.day }
+        listEventSorted.addAll(listEventDto.sortedWith(compareBy<EventDto> { it.year?.toInt() }
+            .thenBy { it.month?.toInt() }
+            .thenBy { it.day?.toInt() }
             .thenBy { it.timeStart }
             .thenBy { it.timeEnd }))
         _mListCurrentEventDto.postValue(listEventSorted)
