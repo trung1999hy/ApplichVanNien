@@ -96,7 +96,8 @@ class EventViewModel : ViewModel() {
                         timeStart = eventRegister.timeStart,
                         timeEnd = eventRegister.timeEnd,
                         contentEvent = eventRegister.title,
-                        address = eventRegister.address
+                        address = eventRegister.address,
+                        isHightLight = true
                     )
                 )
             }

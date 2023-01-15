@@ -2,6 +2,7 @@ package com.example.universalcalendar.ui.feature.setting
 
 import android.content.Intent
 import android.view.View
+import com.example.universalcalendar.BuildConfig
 import com.example.universalcalendar.R
 import com.example.universalcalendar.databinding.FragmentSettingBinding
 import com.example.universalcalendar.extensions.SharePreference
@@ -16,6 +17,8 @@ import com.example.universalcalendar.ui.feature.setting.vows.ListVowsActivity
 import com.example.universalcalendar.ui.dialog.UserDialog
 
 class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>() {
+
+    private var listStateStar = arrayOf(0,0,0,0,0)
 
     override fun getViewModelClass(): Class<SettingViewModel> = SettingViewModel::class.java
 
@@ -36,6 +39,7 @@ class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>()
             binding.tvSettingLogin.visibility = View.VISIBLE
             binding.tvSettingUserName.visibility = View.GONE
         }
+        binding.tvSettingVersionContent.text = BuildConfig.VERSION_NAME
     }
 
     override fun initAction() {
@@ -54,10 +58,40 @@ class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>()
             val dialog = TimeCountriesDialog.newInstance()
             dialog.shows(childFragmentManager)
         }
+        binding.icRateStar1.setOnClickListener {
+            val state = if (listStateStar[0] == 0) 1 else 0
+            listStateStar[0] = state
+            binding.icRateStar1.setImageLevel(state)
+        }
+        binding.icRateStar2.setOnClickListener {
+            val state = if (listStateStar[1] == 0) 1 else 0
+            listStateStar[1] = state
+            binding.icRateStar2.setImageLevel(state)
+        }
+        binding.icRateStar3.setOnClickListener {
+            val state = if (listStateStar[2] == 0) 1 else 0
+            listStateStar[2] = state
+            binding.icRateStar3.setImageLevel(state)
+        }
+        binding.icRateStar4.setOnClickListener {
+            val state = if (listStateStar[3] == 0) 1 else 0
+            listStateStar[3] = state
+            binding.icRateStar4.setImageLevel(state)
+        }
+        binding.icRateStar5.setOnClickListener {
+            val state = if (listStateStar[4] == 0) 1 else 0
+            listStateStar[4] = state
+            binding.icRateStar5.setImageLevel(state)
+
+        }
     }
 
     override fun initData() {
-
+        binding.icRateStar1.setImageLevel(listStateStar[0])
+        binding.icRateStar2.setImageLevel(listStateStar[1])
+        binding.icRateStar3.setImageLevel(listStateStar[2])
+        binding.icRateStar4.setImageLevel(listStateStar[3])
+        binding.icRateStar5.setImageLevel(listStateStar[4])
     }
 
 }

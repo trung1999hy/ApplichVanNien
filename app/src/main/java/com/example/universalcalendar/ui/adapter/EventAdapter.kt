@@ -1,9 +1,12 @@
 package com.example.universalcalendar.ui.adapter
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.universalcalendar.CalendarApplication
 import com.example.universalcalendar.R
 import com.example.universalcalendar.extensions.DateUtils
 import com.example.universalcalendar.ui.feature.monthcalendar.entities.EventDto
@@ -83,6 +86,12 @@ class EventAdapter(var list: List<EventDto>) : RecyclerView.Adapter<RecyclerView
             val address = if (item.address.isNullOrEmpty()) "" else  "${item.address}"
             itemView.tv_item_event_type_setup?.text =
                 if (item.timeStart.isNullOrEmpty() || item.timeStart == item.timeEnd) "Cả ngày" else "$address, $timeStart - $timeEnd"
+            if (item.isHightLight) itemView.cl_item_container?.setBackgroundColor(
+                ContextCompat.getColor(CalendarApplication.context(), R.color.orange_item)
+            ) else itemView.cl_item_container?.setBackgroundColor(
+                ContextCompat.getColor(CalendarApplication.context(), R.color.white)
+            )
+            itemView.tag = item
         }
 
         private fun isCheckEventsInOneDay(event1: EventDto, event2: EventDto): Boolean {

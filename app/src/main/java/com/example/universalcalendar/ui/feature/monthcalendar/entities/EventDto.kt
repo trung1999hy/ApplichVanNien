@@ -11,5 +11,6 @@ class EventDto(
     var timeStart: String? = "",
     var timeEnd: String? = "",
     var contentEvent: String?,
-    var address: String? = ""
+    var address: String? = "",
+    var isHightLight: Boolean = false,
 )
