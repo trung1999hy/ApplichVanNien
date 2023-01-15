@@ -8,14 +8,14 @@ import com.example.universalcalendar.ui.HomeActivity
 import com.example.universalcalendar.ui.base.BaseActivity
 
 
-class SplashActivity : BaseActivity<ActivitySplashBinding>() {
+class SplashScreenActivity : BaseActivity<ActivitySplashBinding>() {
 
 
     override fun getLayoutId() = R.layout.activity_splash
 
     override fun initView() {
         Handler().postDelayed({
-            val intent = Intent(this@SplashActivity, HomeActivity::class.java)
+            val intent = Intent(this@SplashScreenActivity, HomeActivity::class.java)
             startActivity(intent)
             finish()
         }, 2000L)

@@ -8,6 +8,11 @@ object Constant {
    const val KEY_USER_INFORMATION = "user_information"
    const val KEY_EVENT_REGISTER = "event_register"
    const val QUOTE = "quote.json"
+   const val CUSTOMS = "phongtuc.json"
+   const val FESTIVAL = "lehoi.json"
+   const val VOWS = "vankhan.json"
+   const val PT_BUSINESS = "ptkinhdoanh.json"
+   const val PT_KNOWLEDGE= "kienthucpt.json"
    const val TIME_MILLISECOND_1000L = 1000L
    const val TIME_MILLISECOND_400L = 400L
    const val EVENT_TYPE_LOOP_DAY = 1
