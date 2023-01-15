@@ -4,7 +4,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import com.example.universalcalendar.R
 import com.example.universalcalendar.extensions.DateUtils
@@ -24,7 +23,7 @@ class UserDialog : BaseDialog() {
     }
 
     private lateinit var mView: View
-    var userLoginCallback: (name: String) -> Unit = {}
+    var userLoginCallback: (user: User) -> Unit = {}
 
 
     override fun createCustomView(): View {
@@ -120,6 +119,15 @@ class UserDialog : BaseDialog() {
             }
 
         })
+        val userInfo = SharePreference.getInstance().getUserInformation()
+        if (userInfo != null) {
+            mView.tv_login_name?.setText(userInfo.name)
+            mView.tv_login_date_of_birth?.setText(DateUtils.convertDateToString(
+                DateUtils.convertStringToDate(DateUtils.DATE_LOCALE_FORMAT_2, userInfo.dateOfBirth),
+                DateUtils.DOB_FORMAT
+            ))
+            mView.tv_login_email?.setText(userInfo.email)
+        }
     }
 
     private fun saveUserInfor() {
@@ -140,7 +148,8 @@ class UserDialog : BaseDialog() {
             )
             val userEmail = mView.tv_login_email?.text.toString()
             val prefs = SharePreference.getInstance()
-            prefs.saveUserInformation(User(userName, userDobFormat, userEmail))
+            val user = User(userName, userDobFormat, userEmail)
+            prefs.saveUserInformation(user)
             prefs.saveEvent(Event(
                 id = userDob.toInt(),
                 daySolar = userDob.substring(0, 2).toInt(),
@@ -150,8 +159,7 @@ class UserDialog : BaseDialog() {
                 timeStart = userDob,
                 timeEnd = userDob
             ))
-            userLoginCallback.invoke(userName)
-            Toast.makeText(context, "Nhập thông tin thành công !", Toast.LENGTH_SHORT).show()
+            userLoginCallback.invoke(user)
             dismissDialog()
         }
     }

@@ -5,11 +5,11 @@ import android.view.View
 import com.example.universalcalendar.BuildConfig
 import com.example.universalcalendar.R
 import com.example.universalcalendar.databinding.FragmentSettingBinding
+import com.example.universalcalendar.extensions.DateUtils
 import com.example.universalcalendar.extensions.SharePreference
 import com.example.universalcalendar.extensions.click
 import com.example.universalcalendar.ui.base.BaseFragment
 import com.example.universalcalendar.ui.dialog.TimeCountriesDialog
-import com.example.universalcalendar.ui.dialog.TimeEventRegisterDialog
 import com.example.universalcalendar.ui.feature.setting.business.ListPTBusinessActivity
 import com.example.universalcalendar.ui.feature.setting.festival.ListFestivalActivity
 import com.example.universalcalendar.ui.feature.setting.pt.ListCustomsActivity
@@ -33,26 +33,23 @@ class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>()
         val userInfo = SharePreference.getInstance().getUserInformation()
         if (userInfo != null) {
             binding.tvSettingLogin.visibility = View.GONE
-            binding.tvSettingUserName.visibility = View.VISIBLE
-            binding.tvSettingUserName.text = userInfo.name
+            binding.lloUserInfo.visibility = View.VISIBLE
+            binding.tvUserName.text = userInfo.name
+            binding.tvDob.text = DateUtils.convertDateToString(
+                DateUtils.convertStringToDate(DateUtils.DATE_LOCALE_FORMAT_2, userInfo.dateOfBirth),
+                DateUtils.DOB_FORMAT
+            )
+            binding.tvEmail.text = userInfo.email
         } else {
             binding.tvSettingLogin.visibility = View.VISIBLE
-            binding.tvSettingUserName.visibility = View.GONE
+            binding.lloUserInfo.visibility = View.GONE
         }
         binding.tvSettingVersionContent.text = BuildConfig.VERSION_NAME
     }
 
     override fun initAction() {
         binding.tvSettingLogin.click {
-            val userInforDialog = UserDialog.newInstance()
-            userInforDialog.apply {
-                userLoginCallback = { userName ->
-                    binding.tvSettingLogin.visibility = View.GONE
-                    binding.tvSettingUserName.visibility = View.VISIBLE
-                    binding.tvSettingUserName.text = userName
-                }
-            }
-            userInforDialog.shows(childFragmentManager)
+            showDialogEditUserInfo()
         }
         binding.btnConvertHour.click {
             val dialog = TimeCountriesDialog.newInstance()
@@ -120,6 +117,26 @@ class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>()
             binding.icRateStar5.setImageLevel(state)
             updateStateStars()
         }
+        binding.icUserInfoEdit.click {
+            showDialogEditUserInfo()
+        }
+    }
+
+    private fun showDialogEditUserInfo() {
+        val userInforDialog = UserDialog.newInstance()
+        userInforDialog.apply {
+            userLoginCallback = { userName ->
+                binding.tvSettingLogin.visibility = View.GONE
+                binding.lloUserInfo.visibility = View.VISIBLE
+                binding.tvUserName.text = userName.name
+                binding.tvDob.text = DateUtils.convertDateToString(
+                    DateUtils.convertStringToDate(DateUtils.DATE_LOCALE_FORMAT_2, userName.dateOfBirth),
+                    DateUtils.DOB_FORMAT
+                )
+                binding.tvEmail.text = userName.email
+            }
+        }
+        userInforDialog.shows(childFragmentManager)
     }
 
     override fun initData() {

@@ -18,6 +18,7 @@ import kotlin.math.sin
 object DateUtils {
 
     const val DATE_LOCALE_FORMAT = "yyyy-MM-dd"
+    const val DOB_FORMAT = "dd/MM/YYYY"
     const val DATE_LOCALE_FORMAT_1 = "yyyyMd"
     const val DATE_LOCALE_FORMAT_2 = "yyyyMMdd"
     const val DATE_EVENT_REGISTER = "yyyyMMddHHmm"
