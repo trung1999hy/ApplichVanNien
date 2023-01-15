@@ -59,34 +59,74 @@ class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>()
             dialog.shows(childFragmentManager)
         }
         binding.icRateStar1.setOnClickListener {
-            val state = if (listStateStar[0] == 0) 1 else 0
+            val state = if (listStateStar[0] == 0) 1 else {
+                listStateStar[1] = 0
+                listStateStar[2] = 0
+                listStateStar[3] = 0
+                listStateStar[4] = 0
+                0
+            }
             listStateStar[0] = state
-            binding.icRateStar1.setImageLevel(state)
+            updateStateStars()
         }
         binding.icRateStar2.setOnClickListener {
-            val state = if (listStateStar[1] == 0) 1 else 0
+            val state = if (listStateStar[1] == 0) {
+                listStateStar[0] = 1
+                1
+            } else {
+                listStateStar[2] = 0
+                listStateStar[3] = 0
+                listStateStar[4] = 0
+                0
+            }
             listStateStar[1] = state
-            binding.icRateStar2.setImageLevel(state)
+            updateStateStars()
         }
         binding.icRateStar3.setOnClickListener {
-            val state = if (listStateStar[2] == 0) 1 else 0
+            val state = if (listStateStar[2] == 0) {
+                listStateStar[0] = 1
+                listStateStar[1] = 1
+                1
+            } else {
+                listStateStar[3] = 0
+                listStateStar[4] = 0
+                0
+            }
             listStateStar[2] = state
-            binding.icRateStar3.setImageLevel(state)
+            updateStateStars()
         }
         binding.icRateStar4.setOnClickListener {
-            val state = if (listStateStar[3] == 0) 1 else 0
+            val state = if (listStateStar[3] == 0) {
+                listStateStar[0] = 1
+                listStateStar[1] = 1
+                listStateStar[2] = 1
+                1
+            } else {
+                listStateStar[4] = 0
+                0
+            }
             listStateStar[3] = state
-            binding.icRateStar4.setImageLevel(state)
+            updateStateStars()
         }
         binding.icRateStar5.setOnClickListener {
-            val state = if (listStateStar[4] == 0) 1 else 0
+            val state = if (listStateStar[4] == 0) {
+                listStateStar[0] = 1
+                listStateStar[1] = 1
+                listStateStar[2] = 1
+                listStateStar[3] = 1
+                1
+            } else 0
             listStateStar[4] = state
             binding.icRateStar5.setImageLevel(state)
-
+            updateStateStars()
         }
     }
 
     override fun initData() {
+        updateStateStars()
+    }
+
+    private fun updateStateStars() {
         binding.icRateStar1.setImageLevel(listStateStar[0])
         binding.icRateStar2.setImageLevel(listStateStar[1])
         binding.icRateStar3.setImageLevel(listStateStar[2])
