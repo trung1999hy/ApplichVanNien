@@ -26,17 +26,16 @@ class TimeCountriesAdapter(var list: List<String>) : RecyclerView.Adapter<Recycl
 
     class ViewHolderListTime(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindData(item: String) {
-//            try {
+            try {
                 val timeToday = LocalDateTime.now(ZoneId.of(item))
                 val countries = item.replace("/", ",").replace("_", " ")
                 val formatter = DateTimeFormatter.ofPattern("HH:mm, dd/MM/yyyy")
                 val dateCountries = timeToday.format(formatter)
                 itemView.tv_time_countries_content?.text = countries
                 itemView.tv_item_event_type_setup?.text = dateCountries
-//            } catch (ex: ZoneRulesException) {
-//                itemView.visibility = View.GONE
-//            }
-
+            } catch (ex: ZoneRulesException) {
+                itemView.visibility = View.GONE
+            }
         }
     }
 

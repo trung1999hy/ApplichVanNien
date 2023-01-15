@@ -10,6 +10,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 import kotlin.math.floor
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -1277,8 +1278,8 @@ object DateUtils {
         return str2
     }
 
-    fun getListGioHD(i: Int, i2: Int, i3: Int, list: MutableList<HourGood?>) {
-        list.clear()
+    fun getListGioHD(i: Int, i2: Int, i3: Int): ArrayList<HourGood> {
+        val list = arrayListOf<HourGood>()
         val str = GIO_HD[(jdn(i, i2, i3) + 1) % 12 % 6]
         var i4 = 0
         while (i4 < 12) {
@@ -1290,9 +1291,10 @@ object DateUtils {
                 sb.append("-")
                 sb.append((i6 + 1) % 24)
                 sb.append("h")
-                list.add(HourGood(ICON_CHI[i4], CHI[i4], sb.toString()))
+                list.add(HourGood(icon = ICON_CHI[i4], name = CHI[i4], hour = sb.toString()))
             }
             i4 = i5
         }
+        return list
     }
 }

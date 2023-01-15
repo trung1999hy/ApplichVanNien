@@ -5,13 +5,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.universalcalendar.common.Constant
+import com.example.universalcalendar.extensions.DateUtils
 import com.example.universalcalendar.extensions.SharePreference
 import com.example.universalcalendar.model.DayDto
 import com.example.universalcalendar.model.Event
+import com.example.universalcalendar.model.HourGood
 import com.example.universalcalendar.ui.adapter.EventAdapter
 import com.example.universalcalendar.ui.feature.monthcalendar.entities.EventDto
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import okhttp3.internal.toImmutableList
 import java.io.IOException
 import java.time.LocalDate
 
@@ -21,6 +24,7 @@ class MonthViewModel : ViewModel() {
     private val mListEventDto: ArrayList<Event> = arrayListOf()
     private val _mListCurrentEventDto: MutableLiveData<ArrayList<EventDto>> = MutableLiveData()
     private val mListEventUserRegisterDto: ArrayList<Event> = arrayListOf()
+    private val mListZodiac: MutableLiveData<ArrayList<HourGood>> = MutableLiveData()
 
     fun currentDayDto(): LiveData<DayDto> {
         return _currentDayDto
@@ -28,6 +32,10 @@ class MonthViewModel : ViewModel() {
 
     fun currentEventDto(): LiveData<ArrayList<EventDto>> {
         return _mListCurrentEventDto
+    }
+
+    fun currentZodiac(): LiveData<ArrayList<HourGood>> {
+        return mListZodiac
     }
 
     fun updateCurrentDayDto(date: LocalDate?) {
@@ -121,6 +129,13 @@ class MonthViewModel : ViewModel() {
             .thenBy { it.timeStart }
             .thenBy { it.timeEnd }))
         _mListCurrentEventDto.postValue(listEventSorted)
+    }
+
+    fun updateListZodiac() {
+        _currentDayDto.value?.let {
+            val list = DateUtils.getListGioHD(it.day, it.month, it.year)
+            mListZodiac.postValue(list)
+        }
     }
 
 }

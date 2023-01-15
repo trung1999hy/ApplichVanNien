@@ -28,14 +28,17 @@ import com.example.universalcalendar.extensions.DateUtils
 import com.example.universalcalendar.extensions.SharePreference
 import com.example.universalcalendar.extensions.click
 import com.example.universalcalendar.model.Event
+import com.example.universalcalendar.model.HourGood
 import com.example.universalcalendar.ui.HomeActivity
 import com.example.universalcalendar.ui.adapter.EventAdapter
+import com.example.universalcalendar.ui.adapter.ZodiacAdapter
 import com.example.universalcalendar.ui.dialog.DatePickerDialog
 import com.example.universalcalendar.ui.feature.monthcalendar.entities.EventDto
 import kotlinx.android.synthetic.main.fragment_day_calendar.view.*
 import kotlinx.coroutines.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import kotlin.collections.ArrayList
 
 class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthViewModel>() {
 
@@ -46,6 +49,8 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
     private lateinit var endMonth: YearMonth
     private var listEvent: ArrayList<EventDto> = arrayListOf()
     private var adapter: EventAdapter? = null
+    private var listZodiac: ArrayList<HourGood> = arrayListOf()
+    private var adapterZodiac: ZodiacAdapter? = null
 
     override fun getViewModelClass(): Class<MonthViewModel> = MonthViewModel::class.java
 
@@ -145,8 +150,17 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
         viewModel.currentEventDto().observe(viewLifecycleOwner, Observer {
             updateListEventCurrentDate(it)
         })
+        adapterZodiac = ZodiacAdapter(listZodiac)
+        binding.rvMonthCalendarHourZodiac.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvMonthCalendarHourZodiac.adapter = adapterZodiac
+        viewModel.currentEventDto().observe(viewLifecycleOwner, Observer {
+            updateListEventCurrentDate(it)
+        })
         viewModel.currentDayDto().observe(viewLifecycleOwner, Observer {
             updateTitleCurrentDate(it)
+        })
+        viewModel.currentZodiac().observe(viewLifecycleOwner, Observer {
+            updateHourZodiac(it)
         })
     }
 
@@ -206,6 +220,7 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
         binding.tvDayNameLunar.text = DateUtils.getCanChiDayLunar(dayDto.day, dayDto.month, dayDto.year)
         binding.tvMonthNameLunar.text = monthLunar
         binding.tvYearNameLunar.text = yearLunar
+        viewModel.updateListZodiac()
     }
 
     private fun updateListEventCurrentDate(events: ArrayList<EventDto>) {
@@ -220,6 +235,11 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
             binding.tvMonthListEventEmpty.visibility = View.VISIBLE
         }
 
+    }
+
+    private fun updateHourZodiac(list: ArrayList<HourGood>) {
+        listZodiac = list
+        adapterZodiac?.refreshData(listZodiac)
     }
 
     private fun addNextMonthToCalendar(number: Long = Constant.Calendar.NUMBER_ADD_MONTH_TO_CALENDAR) {
