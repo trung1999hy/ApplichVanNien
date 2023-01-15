@@ -1,7 +1,6 @@
 package com.example.universalcalendar.ui.feature.event
 
 import android.graphics.Color
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.children

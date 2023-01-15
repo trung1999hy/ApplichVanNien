@@ -1,10 +1,5 @@
 package com.example.universalcalendar.ui.feature.eventregister
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
-import android.os.Build
-import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -19,10 +14,10 @@ import com.example.universalcalendar.model.Event
 import com.example.universalcalendar.ui.HomeActivity
 import com.example.universalcalendar.ui.base.BaseFragment
 import com.example.universalcalendar.ui.dialog.TimeEventRegisterDialog
-import kotlinx.android.synthetic.main.dialog_user_login.view.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 
 class EventRegisterFragment : BaseFragment<FragmentEventRegisterBinding, EventRegisterViewModel>() {
@@ -30,6 +25,8 @@ class EventRegisterFragment : BaseFragment<FragmentEventRegisterBinding, EventRe
     companion object {
         private const val TIME_ADD_30_MINUTES = 30
         private const val TIME_ADD_60_MINUTES = 60
+        const val TYPE_REGISTER_EVENT = "register"
+        const val TYPE_UPDATE_EVENT = "update"
     }
 
     private var currentDate : LocalDate = LocalDate.now()
@@ -99,24 +96,6 @@ class EventRegisterFragment : BaseFragment<FragmentEventRegisterBinding, EventRe
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        createNotificationChannel()
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel =
-                NotificationChannel("calendar_universal", "Thông Báo sự kiện", importance).apply {
-                    description = "Thông Báo về sự kiện"
-                }
-            val notificationManager =
-                activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
-
     private fun saveEvent() {
         if (binding.etEventRegisterJobTitle.text?.isEmpty() == true) {
             binding.tvEventRegisterError.visibility = View.VISIBLE
@@ -139,8 +118,15 @@ class EventRegisterFragment : BaseFragment<FragmentEventRegisterBinding, EventRe
                 title = binding.etEventRegisterJobContent.text.toString(),
                 address = binding.etEventRegisterJobLocation.text.toString()
             )
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.YEAR, startDate.year)
+            calendar.set(Calendar.MONTH, startDate.monthValue - 1)
+            calendar.set(Calendar.DAY_OF_MONTH, startDate.dayOfMonth)
+            calendar.set(Calendar.MINUTE, startDate.minute)
+            calendar.set(Calendar.HOUR_OF_DAY, startDate.hour)
+            calendar.set(Calendar.SECOND, 0)
             SharePreference.getInstance().saveEvent(event)
-            AlarmUtils.create(context, startDate, event)
+            AlarmUtils.create(context, calendar, event)
             Toast.makeText(context, "Đăng kí sự kiện thành công !", Toast.LENGTH_SHORT).show()
             onBackPress()
         }

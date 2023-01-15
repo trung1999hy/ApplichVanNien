@@ -37,7 +37,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".ui.service.EventReceiver"/>
+        <receiver android:name=".ui.broadcasts.EventReceiver"/>
     </application>
 
 </manifest>

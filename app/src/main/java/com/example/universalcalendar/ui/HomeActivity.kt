@@ -1,11 +1,10 @@
 package com.example.universalcalendar.ui
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.graphics.Rect
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.*
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -196,6 +195,18 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(), NavController.OnDestin
                 } else finish()
             }
             else -> navController.navigateUp()
+        }
+    }
+
+    override fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel =
+                NotificationChannel("lichthiennienky", "Thông Báo sự kiện", importance).apply {
+                    description = "Thông Báo về sự kiện"
+                }
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
     }
 

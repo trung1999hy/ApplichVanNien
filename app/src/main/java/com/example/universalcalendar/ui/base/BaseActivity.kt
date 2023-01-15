@@ -37,7 +37,10 @@ abstract class BaseActivity<V: ViewDataBinding> : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         }
+        createNotificationChannel()
     }
+
+    open fun createNotificationChannel() {}
 
     protected abstract fun getLayoutId(): Int
 
