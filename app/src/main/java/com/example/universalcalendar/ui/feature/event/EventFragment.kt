@@ -1,6 +1,7 @@
 package com.example.universalcalendar.ui.feature.event
 
 import android.graphics.Color
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.children
@@ -15,9 +16,20 @@ import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.*
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.universalcalendar.extensions.SharePreference
+import com.example.universalcalendar.extensions.click
 import com.example.universalcalendar.model.DayDto
+import com.example.universalcalendar.ui.HomeActivity
+import com.example.universalcalendar.ui.adapter.EventAdapter
+import com.example.universalcalendar.ui.feature.monthcalendar.entities.EventDto
 import com.kizitonwose.calendar.view.WeekDayBinder
 import com.kizitonwose.calendar.view.WeekHeaderFooterBinder
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 
 
 class EventFragment : BaseFragment<FragmentEventBinding, EventViewModel>() {
@@ -26,6 +38,9 @@ class EventFragment : BaseFragment<FragmentEventBinding, EventViewModel>() {
     private lateinit var currentDate: LocalDate
     private lateinit var startDate: LocalDate
     private lateinit var endDate: LocalDate
+    private var birthDayDate: LocalDate? = null
+    private var listEvent: ArrayList<EventDto> = arrayListOf()
+    private var adapter: EventAdapter? = null
 
     override fun getViewModelClass(): Class<EventViewModel> = EventViewModel::class.java
 
@@ -46,6 +61,9 @@ class EventFragment : BaseFragment<FragmentEventBinding, EventViewModel>() {
                 container.weekDay = data
                 container.textView.text = data.date.dayOfMonth.toString()
                 container.textView.setTextColor(Color.BLACK)
+                if (data.date == birthDayDate) {
+                    container.showImageDob()
+                }
                 when (data.date) {
                     selectedDate -> container.textView.setBackgroundResource(R.drawable.bg_event_calendar_date_selected)
                     LocalDate.now() -> container.textView.setBackgroundResource(R.drawable.bg_event_calendar_date_now)
@@ -58,10 +76,41 @@ class EventFragment : BaseFragment<FragmentEventBinding, EventViewModel>() {
         }
     }
 
+    override fun initAction() {
+        binding.icEventRegister.click {
+            (activity as HomeActivity).navigateToEventSetupScreen()
+        }
+    }
+
+    override fun initAdapter() {
+        adapter = EventAdapter(listEvent)
+        binding.rvListEvent.layoutManager = LinearLayoutManager(context)
+        binding.rvListEvent.adapter = adapter
+        viewModel.listEventData().observe(viewLifecycleOwner, Observer {
+            updateListTitleByDate(it)
+        })
+        viewModel.currentDayDto().observe(viewLifecycleOwner, Observer {
+            updateTitleByDate(it)
+        })
+        viewModel.currentEventPosition().observe(viewLifecycleOwner, Observer {
+            if (it != null) (binding.rvListEvent.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+                it,
+                0
+            )
+            binding.rvListEvent.visibility = View.VISIBLE
+        })
+    }
+
     override fun initData() {
+        binding.rvListEvent.visibility = View.INVISIBLE
+        val userInfo = SharePreference.getInstance().getUserInformation()
+        if (userInfo != null) {
+            val dateOfBirth = userInfo.dateOfBirth ?: ""
+            birthDayDate = LocalDate.parse("$dateOfBirth", DateTimeFormatter.BASIC_ISO_DATE)
+        }
         currentDate = LocalDate.now()
         selectedDate = LocalDate.now()
-        viewModel.updateCurrentDayDto(selectedDate)
+        getDataEvents()
         startDate = currentDate.minusMonths(Constant.Calendar.NUMBER_ADD_WEEK_TO_CALENDAR)
         endDate = currentDate.plusMonths(Constant.Calendar.NUMBER_ADD_WEEK_TO_CALENDAR)
         val daysOfWeek = daysOfWeek()
@@ -83,9 +132,14 @@ class EventFragment : BaseFragment<FragmentEventBinding, EventViewModel>() {
                 }
             }
         }
-        viewModel.currentDayDto().observe(viewLifecycleOwner, Observer {
-            updateListEventByDate(it)
-        })
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun getDataEvents() {
+        GlobalScope.launch(Dispatchers.Unconfined) {
+            viewModel.updateCurrentDayDto(selectedDate)
+            viewModel.fetchDataEvent(context)
+        }
     }
 
     private fun updateWeekAfterScroll(week: Week) {
@@ -102,10 +156,17 @@ class EventFragment : BaseFragment<FragmentEventBinding, EventViewModel>() {
         }
     }
 
-    private fun updateListEventByDate(dayDto: DayDto) {
+    private fun updateTitleByDate(dayDto: DayDto) {
         val monthHeaderTitle = "Tháng ${dayDto.month} - ${dayDto.year}"
         binding.eventCalendarHeaderTitle.text = monthHeaderTitle
-        //update list event
+        viewModel.updateCurrentEventPosition()
+    }
+
+    private fun updateListTitleByDate(events: ArrayList<EventDto>) {
+        listEvent.clear()
+        listEvent.addAll(events)
+        adapter?.refreshData(listEvent)
+        viewModel.updateCurrentEventPosition()
     }
 
     private fun addNextWeekToCalendar() {

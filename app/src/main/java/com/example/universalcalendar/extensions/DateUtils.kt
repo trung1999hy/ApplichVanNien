@@ -19,6 +19,10 @@ object DateUtils {
     const val DATE_LOCALE_FORMAT = "yyyy-MM-dd"
     const val DATE_LOCALE_FORMAT_1 = "yyyyMd"
     const val DATE_LOCALE_FORMAT_2 = "yyyyMMdd"
+    const val DATE_EVENT_REGISTER = "yyyyMMddHHmm"
+    const val TIME_EVENT_PARSE = "yyyyMdHm"
+    const val DATE_EVENT_REGISTER_2 = "HH:mm"
+    const val DOB_USER_FORMAT = "ddMMyyyy"
     const val WEEK_DAY_FORMAT = "EEEE"
     const val CONST_CAN_1 = 12
     const val CONST_CAN_10 = 9

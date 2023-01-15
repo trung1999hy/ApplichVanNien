@@ -1,6 +1,7 @@
 package com.example.universalcalendar.ui.feature.monthcalendar
 
 import android.graphics.Color
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -32,6 +33,7 @@ import com.example.universalcalendar.ui.adapter.EventAdapter
 import com.example.universalcalendar.ui.dialog.DatePickerDialog
 import com.example.universalcalendar.ui.feature.monthcalendar.entities.EventDto
 import kotlinx.android.synthetic.main.fragment_day_calendar.view.*
+import kotlinx.coroutines.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
@@ -71,8 +73,7 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
                 container.day = data
                 container.textView.text = data.date.dayOfMonth.toString()
                 if (data.date == birthDayDate) {
-                    container.imageView1.visibility = View.VISIBLE
-                    container.imageView2.visibility = View.VISIBLE
+                    container.showImageDob()
                 }
                 if (data.position == DayPosition.MonthDate) {
                     container.textView.setTextColor(Color.BLACK)
@@ -83,6 +84,23 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
                     }
                 } else {
                     container.textView.setTextColor(Color.GRAY)
+                    container.textView.background = null
+                }
+            }
+        }
+        binding.monthCalendar.monthHeaderBinder = object :
+            MonthHeaderFooterBinder<MonthViewContainer> {
+            override fun create(view: View) = MonthViewContainer(view)
+            override fun bind(container: MonthViewContainer, data: CalendarMonth) {
+                if (container.titlesContianer.tag == null) {
+                    container.titlesContianer.tag = data.yearMonth
+                    container.titlesContianer.children.map { it as TextView }
+                        .forEachIndexed { index, textView ->
+                            val dayOfWeek = daysOfWeek()[index]
+                            val title =
+                                dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                            textView.text = Constant.Calendar.MAP_DAY_WEEK_TITLE[title]
+                        }
                 }
             }
         }
@@ -120,6 +138,7 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
     }
 
     override fun initAdapter() {
+        binding.monthCalendarViewModel = viewModel
         adapter = EventAdapter(listEvent)
         binding.rvMonthCalendarEvents.layoutManager = LinearLayoutManager(context)
         binding.rvMonthCalendarEvents.adapter = adapter
@@ -132,36 +151,26 @@ class MonthCalendarFragment : BaseFragment<FragmentMonthCalendarBinding, MonthVi
     }
 
     override fun initData() {
-        val userInfor = SharePreference.getInstance().getUserInformation()
-        if (userInfor != null) {
-            val dateOfBirth = userInfor.dateOfBirth ?: ""
+        val userInfo = SharePreference.getInstance().getUserInformation()
+        if (userInfo != null) {
+            val dateOfBirth = userInfo.dateOfBirth ?: ""
             birthDayDate = LocalDate.parse("$dateOfBirth", DateTimeFormatter.BASIC_ISO_DATE)
         }
-        viewModel.fetchDataEvent(context)
-        binding.monthCalendarViewModel = viewModel
         currentMonth = YearMonth.now()
         selectedDate = LocalDate.now()
-        viewModel.updateCurrentDayDto(selectedDate)
+        getDataEvents()
         startMonth = currentMonth.minusMonths(Constant.Calendar.NUMBER_ADD_MONTH_TO_CALENDAR)
         endMonth = currentMonth.plusMonths(Constant.Calendar.NUMBER_ADD_MONTH_TO_CALENDAR)
         val daysOfWeek = daysOfWeek()
         binding.monthCalendar.setup(startMonth, endMonth, daysOfWeek.first())
         binding.monthCalendar.scrollToMonth(currentMonth)
-        binding.monthCalendar.monthHeaderBinder = object :
-            MonthHeaderFooterBinder<MonthViewContainer> {
-            override fun create(view: View) = MonthViewContainer(view)
-            override fun bind(container: MonthViewContainer, data: CalendarMonth) {
-                if (container.titlesContianer.tag == null) {
-                    container.titlesContianer.tag = data.yearMonth
-                    container.titlesContianer.children.map { it as TextView }
-                        .forEachIndexed { index, textView ->
-                            val dayOfWeek = daysOfWeek()[index]
-                            val title =
-                                dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                            textView.text = Constant.Calendar.MAP_DAY_WEEK_TITLE[title]
-                        }
-                }
-            }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun getDataEvents() {
+        GlobalScope.launch(Dispatchers.Unconfined) {
+            viewModel.updateCurrentDayDto(selectedDate)
+            viewModel.fetchDataEvent(context)
         }
     }
 

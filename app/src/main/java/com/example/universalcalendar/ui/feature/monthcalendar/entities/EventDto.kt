@@ -8,5 +8,8 @@ class EventDto(
     var day: String?,
     var month: String?,
     var year: String?,
-    var contentEvent: String?
+    var timeStart: String? = "",
+    var timeEnd: String? = "",
+    var contentEvent: String?,
+    var address: String? = ""
 )

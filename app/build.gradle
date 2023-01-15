@@ -71,5 +71,7 @@ dependencies {
     // The compose calendar library
     implementation 'com.kizitonwose.calendar:compose:2.1.1'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    //coroutine
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
 }

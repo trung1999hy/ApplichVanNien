@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.universalcalendar.common.Constant
+import com.example.universalcalendar.extensions.SharePreference
 import com.example.universalcalendar.model.DayDto
 import com.example.universalcalendar.model.Event
 import com.example.universalcalendar.ui.adapter.EventAdapter
@@ -15,13 +17,10 @@ import java.time.LocalDate
 
 class MonthViewModel : ViewModel() {
 
-    companion object {
-        private const val PATH_DATA_EVENT = "event.json"
-    }
-
     private val _currentDayDto: MutableLiveData<DayDto> = MutableLiveData()
     private val mListEventDto: ArrayList<Event> = arrayListOf()
     private val _mListCurrentEventDto: MutableLiveData<ArrayList<EventDto>> = MutableLiveData()
+    private val mListEventUserRegisterDto: ArrayList<Event> = arrayListOf()
 
     fun currentDayDto(): LiveData<DayDto> {
         return _currentDayDto
@@ -33,21 +32,23 @@ class MonthViewModel : ViewModel() {
 
     fun updateCurrentDayDto(date: LocalDate?) {
         val dateNow = date ?: LocalDate.now()
-        _currentDayDto.value = DayDto(
+        _currentDayDto.postValue(DayDto(
             dayOfWeek = dateNow.dayOfWeek.toString(),
             day = dateNow.dayOfMonth,
             month = dateNow.monthValue,
             year = dateNow.year
-        )
+        ))
         updateListCurrentEvent()
     }
 
     fun fetchDataEvent(context: Context?) {
         mListEventDto.clear()
         _mListCurrentEventDto.value?.clear()
+        mListEventUserRegisterDto.clear()
         lateinit var jsonString: String
+        val listEventRegister = SharePreference.getInstance().getEventRegister()
         try {
-            jsonString = context?.assets?.open(PATH_DATA_EVENT)
+            jsonString = context?.assets?.open(Constant.PATH_DATA_EVENT)
                 ?.bufferedReader()
                 .use { it?.readText() ?: "{}" }
         } catch (ioException: IOException) {
@@ -57,17 +58,50 @@ class MonthViewModel : ViewModel() {
         val listCountryType = object : TypeToken<List<Event>>() {}.type
         val listEvent: List<Event> = Gson().fromJson(jsonString, listCountryType)
         mListEventDto.addAll(listEvent)
+        if (!listEventRegister.isNullOrEmpty()) {
+            mListEventUserRegisterDto.addAll(listEventRegister)
+        }
         updateListCurrentEvent()
     }
 
     private fun updateListCurrentEvent() {
+        if (mListEventDto.isEmpty()) return
         val listEventByDate = mListEventDto.filter { event ->
-            event.daySolar == _currentDayDto.value?.day &&
-                    event.monthSolar == _currentDayDto.value?.month &&
-                    event.yearSolar == _currentDayDto.value?.year
-        }
+            event.monthSolar == _currentDayDto.value?.month &&
+                    event.yearSolar == _currentDayDto.value?.year && event.yearSolar != 0
+        }.sortedBy { it.daySolar }
+
+        val listEventEveryYear = mListEventDto.filter { it.yearSolar == 0 }
+            .sortedWith(compareBy<Event> { it.monthSolar }
+                .thenBy { it.daySolar })
+
+        val listEventRegister = mListEventUserRegisterDto.sortedWith(compareBy<Event> { it.yearSolar }
+            .thenBy { it.monthSolar }
+            .thenBy { it.daySolar }
+            .thenBy { it.timeStart }
+            .thenBy { it.timeEnd })
+
         val listEventDto = arrayListOf<EventDto>()
+        listEventRegister.forEach { eventRegister ->
+            listEventDto.add(
+                EventDto(
+                    viewType = EventAdapter.ItemViewType.EVENT_DAY,
+                    dayOfWeek = eventRegister.daySolar.toString(),
+                    day = eventRegister.daySolar.toString(),
+                    month = eventRegister.monthSolar.toString(),
+                    year = eventRegister.yearSolar.toString(),
+                    timeStart = eventRegister.timeStart,
+                    timeEnd = eventRegister.timeEnd,
+                    contentEvent = eventRegister.title,
+                    address = eventRegister.address
+                )
+            )
+        }
         listEventByDate.forEach {
+            val eventOfYear =
+                listEventEveryYear.firstOrNull { eventYear ->
+                    it.daySolar == eventYear.daySolar &&
+                            it.monthSolar == eventYear.monthSolar }?.title ?: ""
             listEventDto.add(
                 EventDto(
                     viewType = EventAdapter.ItemViewType.EVENT_DAY,
@@ -75,11 +109,18 @@ class MonthViewModel : ViewModel() {
                     day = it.daySolar.toString(),
                     month = it.monthSolar.toString(),
                     year = it.yearSolar.toString(),
-                    contentEvent = it.title
+                    contentEvent = if (eventOfYear.isNotEmpty()) "${it.title}\n$eventOfYear" else it.title,
+                    address = it.address
                 )
             )
         }
-        _mListCurrentEventDto.value = listEventDto
+        val listEventSorted = arrayListOf<EventDto>()
+        listEventSorted.addAll(listEventDto.sortedWith(compareBy<EventDto> { it.year }
+            .thenBy { it.month }
+            .thenBy { it.day }
+            .thenBy { it.timeStart }
+            .thenBy { it.timeEnd }))
+        _mListCurrentEventDto.postValue(listEventSorted)
     }
 
 }

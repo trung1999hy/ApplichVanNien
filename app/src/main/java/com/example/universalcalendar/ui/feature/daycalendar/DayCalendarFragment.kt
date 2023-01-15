@@ -20,6 +20,7 @@ import com.example.universalcalendar.widgets.OnSwipeTouchListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.fragment_day_calendar.*
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -36,6 +37,7 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
     private var monthSolar = 0
     private var yearSolar = 0
     private val mListQuotation = ArrayList<Quotation>()
+    private lateinit var timer: Timer
 
     private lateinit var calendar: Calendar
     override fun getViewModelClass(): Class<DayViewModel> = DayViewModel::class.java
@@ -115,7 +117,15 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
     @SuppressLint("SetTextI18n")
     private fun loadDataCalendar(daySolar: Int, monthSolar: Int, yearSolar: Int) {
         val lunarDay = DateUtils.convertSolar2Lunar(daySolar, monthSolar, yearSolar, 7.00)
-        binding.tvHour.formatDateTime(calendar.time)
+        timer = Timer()
+        timer.schedule(object : TimerTask() {
+            override fun run() {
+                activity?.runOnUiThread(Runnable {
+                    val simpleDateFormat = SimpleDateFormat("HH:mm")
+                    binding.tvHour.text = simpleDateFormat.format(Calendar.getInstance().time).toString()
+                })
+            }
+        }, 0, 1000)
         binding.tvDaySolar.text = if (daySolar < 10) "0${daySolar}" else "$daySolar"
         binding.tvDayLunar.text = lunarDay[0].toString()
         binding.tvMonthLunar.text = "Tháng ${lunarDay[1]}"
@@ -310,7 +320,11 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
 
     override fun onResume() {
         super.onResume()
-        binding.tvHour.formatDateTime(calendar.time)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timer.cancel()
     }
 
 }

@@ -4,10 +4,13 @@ import android.content.Context
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -33,6 +36,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(), NavController.OnDestin
 
     private var activeFragment: Fragment?= dayCalendarFragment
     private val prefs = SharePreference()
+    private var isLogOut = false
 
     private val navItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -94,17 +98,26 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(), NavController.OnDestin
         invalidateOptionsMenu()
         when (destination.id) {
             R.id.day_fragment -> {
+                closeFlagToLogout(5000L)
                 binding.bottomNav.menu.getItem(0).isChecked = true
+                onShowBottonBar(true)
             }
             R.id.month_fragment -> {
+                closeFlagToLogout(5000L)
                 binding.bottomNav.menu.getItem(1).isChecked = true
+                onShowBottonBar(true)
             }
             R.id.event_fragment-> {
+                closeFlagToLogout(5000L)
                 binding.bottomNav.menu.getItem(2).isChecked = true
+                onShowBottonBar(true)
             }
             R.id.setting_fragment -> {
+                closeFlagToLogout(5000L)
                 binding.bottomNav.menu.getItem(3).isChecked = true
+                onShowBottonBar(true)
             }
+            R.id.event_register_fragment -> onShowBottonBar(false)
             else -> {}
         }
     }
@@ -161,9 +174,27 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(), NavController.OnDestin
         return super.dispatchTouchEvent(ev)
     }
 
+    private fun closeFlagToLogout(duration: Long) {
+        if (!isLogOut) return
+        Handler(Looper.getMainLooper()).postDelayed({
+            isLogOut = false
+        }, duration)
+    }
+
     override fun onBackPressed() {
         when (navController.currentDestination?.id) {
-            R.id.day_fragment -> finish()
+            R.id.day_fragment,
+            R.id.month_fragment,
+            R.id.event_fragment,
+            R.id.setting_fragment -> {
+                if (!isLogOut) {
+                    isLogOut = true
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        isLogOut = false
+                    }, 5000L)
+                    Toast.makeText(this, "Nhấp 1 lần nữa để thoát app !", Toast.LENGTH_SHORT).show()
+                } else finish()
+            }
             else -> navController.navigateUp()
         }
     }

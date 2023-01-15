@@ -33,7 +33,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_weight="1"
                 android:gravity="left"
-                android:text="Tạo sự kiện"
+                android:text="sự kiện"
                 android:textColor="@color/dark_blue"
                 android:textSize="18dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -94,6 +94,18 @@
                 android:drawableTint="@color/orange"
                 android:hint="Địa điểm (không bắt buộc)"
                 android:textSize="15dp" />
+
+            <TextView
+                android:id="@+id/tv_event_register_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="20dp"
+                android:gravity="left"
+                android:textColor="@color/red"
+                android:textSize="14dp"
+                android:visibility="gone"
+                tools:text="Email không được để trống" />
         </LinearLayout>
 
         <TextView
@@ -141,6 +153,7 @@
                 android:layout_width="wrap_content"
                 android:theme="@style/SwitchCompatCustom"
                 android:layout_height="wrap_content"
+                android:checked="false"
                 android:layout_marginEnd="10dp" />
         </LinearLayout>
 
@@ -157,6 +170,7 @@
             android:weightSum="2">
 
             <TextView
+                android:id="@+id/tv_event_register_time_start"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -175,6 +189,7 @@
                 android:background="@color/gray" />
 
             <TextView
+                android:id="@+id/tv_event_register_time_end"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -195,94 +210,94 @@
             android:background="@color/line_border_grey"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="50dp"
-            android:background="@color/line_border_grey"
-            app:layout_constraintBottom_toBottomOf="parent" />
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="1dp"-->
+<!--            android:layout_marginTop="50dp"-->
+<!--            android:background="@color/line_border_grey"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent" />-->
 
-        <LinearLayout
-            android:id="@+id/ll_event_register_loop"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="10dp">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/ll_event_register_loop"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="center"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:padding="10dp">-->
 
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginStart="10dp"
-                android:scaleType="center"
-                android:src="@drawable/ic_refresh"
-                app:tint="@color/gray" />
+<!--            <ImageView-->
+<!--                android:layout_width="18dp"-->
+<!--                android:layout_height="18dp"-->
+<!--                android:layout_marginStart="10dp"-->
+<!--                android:scaleType="center"-->
+<!--                android:src="@drawable/ic_refresh"-->
+<!--                app:tint="@color/gray" />-->
 
-            <TextView
-                android:id="@+id/tv_event_register_loop"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="10dp"
-                android:layout_weight="1"
-                android:text="Không lặp lại"
-                android:textColor="@color/black"
-                android:textSize="18dp" />
+<!--            <TextView-->
+<!--                android:id="@+id/tv_event_register_loop"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="20dp"-->
+<!--                android:layout_marginEnd="10dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Không lặp lại"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="18dp" />-->
 
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_arrow_next"
-                app:tint="@color/gray" />
-        </LinearLayout>
+<!--            <ImageView-->
+<!--                android:layout_width="18dp"-->
+<!--                android:layout_height="18dp"-->
+<!--                android:layout_marginEnd="10dp"-->
+<!--                android:src="@drawable/ic_arrow_next"-->
+<!--                app:tint="@color/gray" />-->
+<!--        </LinearLayout>-->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/line_border_grey"
-            app:layout_constraintBottom_toBottomOf="parent" />
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="1dp"-->
+<!--            android:background="@color/line_border_grey"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent" />-->
 
-        <LinearLayout
-            android:id="@+id/ll_event_register_notify"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="10dp">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/ll_event_register_notify"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="center"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:padding="10dp">-->
 
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginStart="10dp"
-                android:scaleType="center"
-                android:src="@drawable/ic_notification"
-                app:tint="@color/gray" />
+<!--            <ImageView-->
+<!--                android:layout_width="18dp"-->
+<!--                android:layout_height="18dp"-->
+<!--                android:layout_marginStart="10dp"-->
+<!--                android:scaleType="center"-->
+<!--                android:src="@drawable/ic_notification"-->
+<!--                app:tint="@color/gray" />-->
 
-            <TextView
-                android:id="@+id/tv_event_register_notify"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="10dp"
-                android:layout_weight="1"
-                android:text="Nhắc trước: 1 ngày"
-                android:textColor="@color/black"
-                android:textSize="18dp" />
+<!--            <TextView-->
+<!--                android:id="@+id/tv_event_register_notify"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="20dp"-->
+<!--                android:layout_marginEnd="10dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Nhắc trước: 1 ngày"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="18dp" />-->
 
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_arrow_next"
-                app:tint="@color/gray" />
-        </LinearLayout>
+<!--            <ImageView-->
+<!--                android:layout_width="18dp"-->
+<!--                android:layout_height="18dp"-->
+<!--                android:layout_marginEnd="10dp"-->
+<!--                android:src="@drawable/ic_arrow_next"-->
+<!--                app:tint="@color/gray" />-->
+<!--        </LinearLayout>-->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/line_border_grey"
-            app:layout_constraintBottom_toBottomOf="parent" />
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="1dp"-->
+<!--            android:background="@color/line_border_grey"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent" />-->
 
     </LinearLayout>
 </layout>
