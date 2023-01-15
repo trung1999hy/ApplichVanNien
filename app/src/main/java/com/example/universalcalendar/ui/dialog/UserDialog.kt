@@ -150,7 +150,7 @@ class UserDialog : BaseDialog() {
             val prefs = SharePreference.getInstance()
             val user = User(userName, userDobFormat, userEmail)
             prefs.saveUserInformation(user)
-            prefs.saveEvent(Event(
+            prefs.saveEventBirthDay(Event(
                 id = userDob.toInt(),
                 daySolar = userDob.substring(0, 2).toInt(),
                 monthSolar = userDob.substring(2, 4).toInt(),
