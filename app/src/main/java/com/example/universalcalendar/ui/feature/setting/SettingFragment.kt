@@ -7,6 +7,8 @@ import com.example.universalcalendar.databinding.FragmentSettingBinding
 import com.example.universalcalendar.extensions.SharePreference
 import com.example.universalcalendar.extensions.click
 import com.example.universalcalendar.ui.base.BaseFragment
+import com.example.universalcalendar.ui.dialog.TimeCountriesDialog
+import com.example.universalcalendar.ui.dialog.TimeEventRegisterDialog
 import com.example.universalcalendar.ui.feature.setting.business.ListPTBusinessActivity
 import com.example.universalcalendar.ui.feature.setting.festival.ListFestivalActivity
 import com.example.universalcalendar.ui.feature.setting.pt.ListCustomsActivity
@@ -47,6 +49,10 @@ class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>()
                 }
             }
             userInforDialog.shows(childFragmentManager)
+        }
+        binding.btnConvertHour.click {
+            val dialog = TimeCountriesDialog.newInstance()
+            dialog.shows(childFragmentManager)
         }
     }
 
