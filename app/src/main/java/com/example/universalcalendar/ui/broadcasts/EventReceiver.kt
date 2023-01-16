@@ -25,7 +25,7 @@ class EventReceiver : BroadcastReceiver() {
         val pendingIntent = getActivity(context, 0, i, 0)
 
         val builder = NotificationCompat.Builder(context!!, "lichthiennienky")
-            .setSmallIcon(R.drawable.logo)
+            .setSmallIcon(R.drawable.ic_small_notification)
             .setContentTitle(content)
             .setContentText(time)
             .setAutoCancel(true)
