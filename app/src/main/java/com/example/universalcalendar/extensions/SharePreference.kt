@@ -46,8 +46,7 @@ class SharePreference {
 
     fun saveEvent(event: Event) {
         val listEvent : ArrayList<Event> = arrayListOf()
-        val listEventData = getEventRegister()
-        listEvent.addAll(listEventData.filter { it.id != event.id })
+        listEvent.addAll(getEventRegister())
         listEvent.add(event)
         mPrefs.edit().putString(Constant.KEY_EVENT_REGISTER, Gson().toJson(listEvent)).apply()
     }

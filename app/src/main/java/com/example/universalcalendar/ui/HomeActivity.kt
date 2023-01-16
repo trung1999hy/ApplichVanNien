@@ -122,23 +122,31 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(), NavController.OnDestin
     }
 
     private fun navigateToDayCalendarScreen() {
-        navController.navigate(R.id.day_fragment)
-        activeFragment = dayCalendarFragment
+        if (navController.currentDestination?.id != R.id.day_fragment) {
+            navController.navigate(R.id.day_fragment)
+            activeFragment = dayCalendarFragment
+        }
     }
 
     private fun navigateToMonthCalendarScreen() {
-        navController.navigate(R.id.month_fragment)
-        activeFragment = monthCalendarFragment
+        if (navController.currentDestination?.id != R.id.month_fragment) {
+            navController.navigate(R.id.month_fragment)
+            activeFragment = monthCalendarFragment
+        }
     }
 
     private fun navigateToEventScreen() {
-        navController.navigate(R.id.event_fragment)
-        activeFragment = eventFragment
+        if (navController.currentDestination?.id != R.id.event_fragment) {
+            navController.navigate(R.id.event_fragment)
+            activeFragment = eventFragment
+        }
     }
 
     private fun navigateToSettingScreen() {
-        navController.navigate(R.id.setting_fragment)
-        activeFragment = settingFragment
+        if (navController.currentDestination?.id != R.id.setting_fragment) {
+            navController.navigate(R.id.setting_fragment)
+            activeFragment = settingFragment
+        }
     }
 
     fun navigateToEventSetupScreen() {

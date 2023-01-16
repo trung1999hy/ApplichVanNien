@@ -170,13 +170,55 @@
             android:weightSum="2">
 
             <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="Bắt đầu"
+                android:includeFontPadding="false"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/gray" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:includeFontPadding="false"
+                android:text="Kết thúc"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/line_border_grey"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
                 android:id="@+id/tv_event_register_time_start"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="@color/bg_tv_time_event_register"
+                android:background="@drawable/bg_tv_time_event_register"
                 android:paddingVertical="10dp"
                 android:paddingStart="20dp"
                 android:text="Thứ 5, 12/11/2023\n3:00 SA"
@@ -196,7 +238,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:paddingVertical="10dp"
-                android:background="@color/bg_tv_time_event_register"
+                android:background="@drawable/bg_tv_time_event_register"
                 android:paddingStart="20dp"
                 android:paddingEnd="10dp"
                 android:text="Thứ 5, 12/11/2023\n4:00 SA"

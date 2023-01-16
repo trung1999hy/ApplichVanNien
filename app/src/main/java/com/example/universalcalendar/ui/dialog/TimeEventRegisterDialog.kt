@@ -121,26 +121,27 @@ class TimeEventRegisterDialog : BaseDialog() {
         val daysOfWeek = daysOfWeek()
         mView.event_register_month_calendar.setup(startMonth, endMonth, daysOfWeek.first())
         mView.event_register_month_calendar.scrollToMonth(monthCurrent)
+        updateTitleYearMonthTitle()
     }
 
     private fun initTimePicker() {
-        mView.event_register_time_setup?.setOnTimeChangedListener { _, hour, minute ->
-            val hourTime = if (hour < 10) "0$hour" else hour.toString()
-            val minuteTime = if (minute < 10) "0$minute" else minute.toString()
-            val monthTime = if (dateCurrent.monthValue < 10) "0${dateCurrent.monthValue}" else dateCurrent.monthValue.toString()
-            val dayTime = if (dateCurrent.dayOfMonth < 10) "0${dateCurrent.dayOfMonth}" else dateCurrent.dayOfMonth.toString()
-            timeCurrent = LocalDateTime.parse("${dateCurrent.year}$monthTime$dayTime$hourTime$minuteTime", DateTimeFormatter.ofPattern("yyyyMMddHHmm"))
-            if (typeSetUp == TYPE_SETUP_START && timeCurrent > timeTarget) {
-                val minuteTimeTarget = if (minute < 30) 30 - minute else 60 - minute
-                timeTarget = timeCurrent.plusMinutes(minuteTimeTarget.toLong())
-            }
-        }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             mView.event_register_time_setup?.currentHour = timeCurrent.hour
             mView.event_register_time_setup?.currentMinute = timeCurrent.minute
         } else {
             mView.event_register_time_setup?.hour = timeCurrent.hour
             mView.event_register_time_setup?.minute = timeCurrent.minute
+        }
+        mView.event_register_time_setup?.setOnTimeChangedListener { _, hour, minute ->
+            val hourTime = if (hour < 10) "0$hour" else hour.toString()
+            val minuteTime = if (minute < 10) "0$minute" else minute.toString()
+            val monthTime = if (dateCurrent.monthValue < 10) "0${dateCurrent.monthValue}" else dateCurrent.monthValue.toString()
+            val dayTime = if (dateCurrent.dayOfMonth < 10) "0${dateCurrent.dayOfMonth}" else dateCurrent.dayOfMonth.toString()
+            timeCurrent = LocalDateTime.parse("${dateCurrent.year}$monthTime$dayTime$hourTime$minuteTime", DateTimeFormatter.ofPattern("yyyyMMddHHmm"))
+            if (typeSetUp == TYPE_SETUP_START && timeCurrent >= timeTarget) {
+                val minuteTimeTarget = if (minute < 30) 30 - minute else 60 - minute
+                timeTarget = timeCurrent.plusMinutes(minuteTimeTarget.toLong())
+            }
         }
     }
 

@@ -104,16 +104,20 @@ class EventRegisterFragment : BaseFragment<FragmentEventRegisterBinding, EventRe
             binding.tvEventRegisterError.visibility = View.VISIBLE
             binding.tvEventRegisterError.text = "Nội dung không được bỏ trống"
         } else {
-            val formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm")
+            if (startDate < LocalDateTime.now() && endDate < LocalDateTime.now()) {
+                Toast.makeText(context, "Thời gian đăng kí không hợp lệ !", Toast.LENGTH_SHORT).show()
+                return
+            }
+            val formatter = DateTimeFormatter.ofPattern(if (binding.scEventRegisterSetFullDay.isChecked) "yyyyMMdd" else "yyyyMMddHHmm")
             val startTime = startDate.format(formatter)
             val endTime = endDate.format(formatter)
             val event = Event(
-                id = (endTime.toLong()-startTime.toLong()).toInt(),
+                id = (endTime.toLong() - startTime.toLong()).toInt(),
                 daySolar = startDate.dayOfMonth,
                 monthSolar = startDate.monthValue,
                 yearSolar = startDate.year,
                 timeStart = startTime,
-                timeEnd = endTime,
+                timeEnd = if (binding.scEventRegisterSetFullDay.isChecked) startTime else endTime,
                 topic = binding.etEventRegisterJobTitle.text.toString(),
                 title = binding.etEventRegisterJobContent.text.toString(),
                 address = binding.etEventRegisterJobLocation.text.toString()
@@ -122,8 +126,13 @@ class EventRegisterFragment : BaseFragment<FragmentEventRegisterBinding, EventRe
             calendar.set(Calendar.YEAR, startDate.year)
             calendar.set(Calendar.MONTH, startDate.monthValue - 1)
             calendar.set(Calendar.DAY_OF_MONTH, startDate.dayOfMonth)
-            calendar.set(Calendar.MINUTE, startDate.minute)
-            calendar.set(Calendar.HOUR_OF_DAY, startDate.hour)
+            if (binding.scEventRegisterSetFullDay.isChecked) {
+                calendar.set(Calendar.MINUTE, 0)
+                calendar.set(Calendar.HOUR_OF_DAY, 0)
+            } else {
+                calendar.set(Calendar.MINUTE, startDate.minute)
+                calendar.set(Calendar.HOUR_OF_DAY, startDate.hour)
+            }
             calendar.set(Calendar.SECOND, 0)
             SharePreference.getInstance().saveEvent(event)
             AlarmUtils.create(context, calendar, event)
@@ -156,12 +165,14 @@ class EventRegisterFragment : BaseFragment<FragmentEventRegisterBinding, EventRe
             val dayOfWeekStart =
                 Constant.Calendar.MAP_DAY_WEEK_TITLE_2[startDate.dayOfWeek.toString()]
             val minuteStart = if (startDate.minute >= 10) startDate.minute.toString() else "0${startDate.minute}"
+            val hourStart = if (startDate.hour >= 10) startDate.hour.toString() else "0${startDate.hour}"
             val startTime =
-                "$dayOfWeekStart, ${startDate.dayOfMonth}/${startDate.monthValue}/${startDate.year}\n${startDate.hour}:$minuteStart"
+                "$dayOfWeekStart, ${startDate.dayOfMonth}/${startDate.monthValue}/${startDate.year}\n$hourStart:$minuteStart"
             val dayOfWeekEnd = Constant.Calendar.MAP_DAY_WEEK_TITLE_2[endDate.dayOfWeek.toString()]
             val minuteEnd = if (endDate.minute >= 10) endDate.minute.toString() else "0${endDate.minute}"
+            val hourEnd = if (endDate.hour >= 10) endDate.hour.toString() else "0${endDate.hour}"
             val endTime =
-                "$dayOfWeekEnd, ${endDate.dayOfMonth}/${endDate.monthValue}/${endDate.year}\n${endDate.hour}:$minuteEnd"
+                "$dayOfWeekEnd, ${endDate.dayOfMonth}/${endDate.monthValue}/${endDate.year}\n$hourEnd:$minuteEnd"
             binding.tvEventRegisterTimeStart.text = startTime
             binding.tvEventRegisterTimeEnd.text = endTime
         }

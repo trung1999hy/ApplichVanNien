@@ -23,6 +23,7 @@ object DateUtils {
     const val DATE_LOCALE_FORMAT_2 = "yyyyMMdd"
     const val DATE_EVENT_REGISTER = "yyyyMMddHHmm"
     const val DATE_EVENT_NOTIFY = "HH:mm dd/MM/yyyy"
+    const val DATE_EVENT_NOTIFY_ALL_DAY = "dd/MM/yyyy"
     const val TIME_EVENT_PARSE = "yyyyMdHm"
     const val DATE_EVENT_REGISTER_2 = "HH:mm"
     const val DOB_USER_FORMAT = "ddMMyyyy"
