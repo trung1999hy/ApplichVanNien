@@ -9,6 +9,7 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.example.universalcalendar.R
 import com.example.universalcalendar.common.Constant
 import com.example.universalcalendar.databinding.FragmentDayCalendarBinding
@@ -127,10 +128,11 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
             override fun run() {
                 activity?.runOnUiThread(Runnable {
                     val simpleDateFormat = SimpleDateFormat("HH:mm")
-                    binding.tvHour.text = simpleDateFormat.format(Calendar.getInstance().time).toString()
+                    binding.tvHour.text =
+                        simpleDateFormat.format(Calendar.getInstance().time).toString()
                 })
             }
-        }, 0, 1000)
+        }, 0, Constant.TIME_MILLISECOND_1000L)
         binding.tvDaySolar.text = if (daySolar < 10) "0${daySolar}" else "$daySolar"
         binding.tvDayLunar.text = lunarDay[0].toString()
         binding.tvMonthLunar.text = "Tháng ${lunarDay[1]}"
@@ -185,6 +187,7 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
         } else {
             binding.tvStatusDay.text = Constant.EMPTY
         }
+        setImageChiYear()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -347,10 +350,6 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
 
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         timer.cancel()
@@ -364,6 +363,70 @@ class DayCalendarFragment : BaseFragment<FragmentDayCalendarBinding, DayViewMode
             loadDataCalendar(daySolar, monthSolar, yearSolar)
         } catch (ex: Exception) {
             ex.printStackTrace()
+        }
+    }
+
+    private fun setImageChiYear() {
+        when (DateUtils.getChiYearLunar(yearSolar)) {
+            "Tý" -> {
+                Glide.with(this).load("file:///android_asset/image/ico_giap_ty_chuot.png")
+                    .into(binding.imgChiYear)
+            }
+
+            "Sửu" -> {
+                Glide.with(this).load("file:///android_asset/image/ico_giap_suu.png")
+                    .into(binding.imgChiYear)
+            }
+
+            "Dần" -> {
+                Glide.with(this).load("file:///android_asset/image/ico_giap_dan.png")
+                    .into(binding.imgChiYear)
+            }
+
+            "Mão" -> {
+                Glide.with(this).load("file:///android_asset/image/ico_giap_mao.png")
+                    .into(binding.imgChiYear)
+            }
+
+            "Thìn" -> {
+                Glide.with(this).load("file:///android_asset/image/ico_giap_thin.png")
+                    .into(binding.imgChiYear)
+            }
+
+            "Tỵ" -> {
+                Glide.with(this).load("file:///android_asset/image/ico_giap_ty_ran.png")
+                    .into(binding.imgChiYear)
+            }
+
+            "Ngọ" -> {
+                Glide.with(this).load("file:///android_asset/image/ico_giap_ngo.png")
+                    .into(binding.imgChiYear)
+            }
+
+            "Mùi" -> {
+                Glide.with(this).load("file:///android_asset/image/ico_giap_mui.png")
+                    .into(binding.imgChiYear)
+            }
+
+            "Thân" -> {
+                Glide.with(this).load("file:///android_asset/image/ico_giap_than.png")
+                    .into(binding.imgChiYear)
+            }
+
+            "Dậu" -> {
+                Glide.with(this).load("file:///android_asset/image/ico_giap_dau.png")
+                    .into(binding.imgChiYear)
+            }
+
+            "Tuất" -> {
+                Glide.with(this).load("file:///android_asset/image/ico_giap_tuat.png")
+                    .into(binding.imgChiYear)
+            }
+
+            "Hợi" -> {
+                Glide.with(this).load("file:///android_asset/image/ico_giap_hoi.png")
+                    .into(binding.imgChiYear)
+            }
         }
     }
 

@@ -7,6 +7,7 @@ import com.example.universalcalendar.R
 import com.example.universalcalendar.databinding.FragmentSettingBinding
 import com.example.universalcalendar.extensions.DateUtils
 import com.example.universalcalendar.extensions.SharePreference
+import com.example.universalcalendar.extensions.Utils
 import com.example.universalcalendar.extensions.click
 import com.example.universalcalendar.ui.base.BaseFragment
 import com.example.universalcalendar.ui.dialog.TimeCountriesDialog
@@ -19,6 +20,7 @@ import com.example.universalcalendar.ui.dialog.UserDialog
 class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>() {
 
     private var listStateStar = arrayOf(0,0,0,0,0)
+    private val packageName = activity?.packageName
 
     override fun getViewModelClass(): Class<SettingViewModel> = SettingViewModel::class.java
 
@@ -30,6 +32,11 @@ class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>()
         binding.btnVows.setOnClickListener { startActivity(Intent(context, ListVowsActivity::class.java)) }
         binding.btnBusinessPt.setOnClickListener { startActivity(Intent(context, ListPTBusinessActivity::class.java)) }
         binding.btnKnowledgePt.setOnClickListener { startActivity(Intent(context, ListPTBusinessActivity::class.java)) }
+        binding.llShareApp.setOnClickListener {
+            if (packageName != null) {
+                Utils.shareApp(requireContext(), packageName)
+            }
+        }
         val userInfo = SharePreference.getInstance().getUserInformation()
         if (userInfo != null) {
             binding.tvSettingLogin.visibility = View.GONE

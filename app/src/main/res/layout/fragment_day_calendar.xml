@@ -169,6 +169,15 @@
                             android:textSize="25sp"
                             android:layout_gravity="center"/>
 
+                        <ImageView
+                            android:id="@+id/img_chi_year"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_mao"
+                            android:scaleType="centerCrop"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="5dp"/>
+
                     </LinearLayout>
 
                     <LinearLayout
